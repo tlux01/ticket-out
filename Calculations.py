@@ -2,13 +2,15 @@ import itertools
 from Get import *
 
 
-def compute_expected_value_win(track, race_num):
+def compute_expected_value_win(track, race_num, bet = 0):
     """
     Retrieve expected value of each horse in certain race
     based on implied probability of win pool
 
     :param track: race track you want to pull from
     :param race_num: race number
+    :param bet: default to $0 bet, added as bet can change pool
+                and therefore the expected payout
     :return: none
     """
     win_show_url = get_url(track, race_num)['WPS']
@@ -23,7 +25,7 @@ def compute_expected_value_win(track, race_num):
     # find total amount of money bet in show pool
     for total in pool_totals:
         if total['PoolType'] == 'SH':
-            show_total = int(total['Amount'])
+            show_total = int(total['Amount']) + bet
     # entries is dictionary of horses in race
     entries = data['WPSPools']['Entries']
     runners = [] # includes all horses
@@ -38,11 +40,12 @@ def compute_expected_value_win(track, race_num):
     # turns runners into dictionary with horse as key,
     # horse is type string
     runners = change_dictionary(runners)
+    print(runners)
     # all possible top 3 finishers permutations
     perm = perm_list(active_list)
     perm = list(perm)
     for i in runners.keys():
-        ex = compute_expected_payout(i, runners, show_total, perm, "WinPct")
+        ex = compute_expected_payout(i, runners, show_total, perm, "WinPct", bet)
         runners[i]["Expected Value"] = ex
 
     for horse in runners.keys():
@@ -50,7 +53,7 @@ def compute_expected_value_win(track, race_num):
 
     return runners
 
-def compute_expected_value_dd(track, race_num):
+def compute_expected_value_dd(track, race_num, bet = 0):
     """
     Retrieve expected value of each horse in certain race
     based on implied probability of win pool
@@ -99,7 +102,7 @@ def compute_expected_value_dd(track, race_num):
             # multiply by 100 as DD Implied is in decimal form
             runners[horse]["DD Implied"] = will_pays[horse]["DD Implied"] * 100
     for horse in runners.keys():
-        ex = compute_expected_payout(horse, runners, show_total, perm, "DD Implied")
+        ex = compute_expected_payout(horse, runners, show_total, perm, "DD Implied", bet)
         runners[horse]["Expected Value"] = ex
 
     for horse in runners.keys():
@@ -131,7 +134,7 @@ def compute_probabaility(seq, runners, key):
 
     return prob
 
-def compute_payout(seq, runners, show_total, horse):
+def compute_payout(seq, runners, show_total, horse, bet):
     """
     Profit is net pool less gross amount bet on all show finishers.
     Finishers split profit evenly three ways then divide by gross
@@ -154,11 +157,11 @@ def compute_payout(seq, runners, show_total, horse):
     a_3 = int(runners[seq[1]]['Show'])
 
     # 16% cut is taken from pool
-    profit = (show_total *.84 - a_horse - a_2 - a_3) / 3
+    profit = (show_total *.84 - a_horse - a_2 - a_3 - bet) / 3
     payout = 1 + (profit/a_horse)
     return payout
 
-def compute_expected_payout(horse, runners, show_total, perm, key):
+def compute_expected_payout(horse, runners, show_total, perm, key, bet):
     """
     Computes expected payout of horse
 
@@ -175,7 +178,7 @@ def compute_expected_payout(horse, runners, show_total, perm, key):
         if horse in seq:
             prob = compute_probabaility(seq, runners, key)
             prob_total += prob
-            payout = compute_payout(seq, runners, show_total, horse)
+            payout = compute_payout(seq, runners, show_total, horse, bet)
             expected_value += prob*payout
     return expected_value
 
@@ -197,3 +200,4 @@ def dd_implied(double_total, will_pays):
             will_pays[horse]['DD Implied'] = will_pays[horse]['Num Tickets'] / total
 
     return will_pays
+

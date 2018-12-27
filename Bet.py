@@ -5,7 +5,7 @@ import time
 from pynput.keyboard import Key, Controller
 driver = webdriver.Chrome()
 
-usrName = ''
+usrName = ""
 pssWrd = ""
 bet_amount = '10'
 
