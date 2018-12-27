@@ -1,0 +1,8 @@
+.idea/
+__pycache__
+Data/
+chromedriver.exe
+GetTest.py
+Scraper.py
+Test.py
+geckodriver.exe
