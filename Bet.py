@@ -3,10 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-
 import time
-from pynput.keyboard import Key, Controller
+
 driver = webdriver.Chrome()
 
 with open("login.txt") as f:
@@ -56,12 +54,3 @@ for button in buttons:
         button.click()
 time.sleep(5)
 driver.close()
-#b = button.find_elements_by_tag_name("button")[0].click()
-
-# TAB TAB ENTER to click confirm bet
-# keyboard.press(Key.tab)
-# keyboard.release(Key.tab)
-# keyboard.press(Key.tab)
-# keyboard.release(Key.tab)
-# keyboard.press(Key.enter)
-# keyboard.release(Key.enter)
