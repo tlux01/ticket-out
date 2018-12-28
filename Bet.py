@@ -5,8 +5,11 @@ import time
 from pynput.keyboard import Key, Controller
 driver = webdriver.Chrome()
 
-usrName = ""
-pssWrd = ""
+with open("login.txt") as f:
+    usrName = f.readline()
+    pssWrd = f.readline()
+f.close()
+
 bet_amount = '10'
 
 driver.maximize_window()
