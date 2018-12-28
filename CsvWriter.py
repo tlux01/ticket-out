@@ -1,7 +1,7 @@
 import csv
-from Get import *
 import os
 import time
+from Calculations import *
 
 
 def track_data_collector(track, start_from = 1):
