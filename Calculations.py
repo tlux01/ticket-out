@@ -148,7 +148,7 @@ def compute_payout(seq, runners, show_total, horse, bet):
     """
 
     horse_index = seq.index(horse) # index of wanted horse
-    a_horse = int(runners[seq[horse_index]]['Show'])
+    a_horse = int(runners[seq[horse_index]]['Show']) + bet
 
     # remove horse so we always get the other two horse as
     # index 0 and 1
@@ -157,7 +157,7 @@ def compute_payout(seq, runners, show_total, horse, bet):
     a_3 = int(runners[seq[1]]['Show'])
 
     # 16% cut is taken from pool
-    profit = (show_total *.84 - a_horse - a_2 - a_3 - bet) / 3
+    profit = (show_total *.84 - a_horse - a_2 - a_3) / 3
     payout = 1 + (profit/a_horse)
     return payout
 
