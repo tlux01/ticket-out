@@ -1,6 +1,6 @@
 
 track_list = {
-              "Aqueduct": {'BrisCode': "AQU", "TrackType": "Thoroughbred", 'AtabCode': None},
+              "Aqueduct": {'BrisCode': "aqu", "TrackType": "Thoroughbred", 'AtabCode': 'AQD'},
               "Churchill Downs": {'BrisCode': "CD", "TrackType": "Thoroughbred", 'AtabCode': None},
               "Del Mar": {'BrisCode': "DMR", "TrackType": "Thoroughbred", 'AtabCode': None},
               "Fair Grounds": {'BrisCode': 'fg', 'TrackType': 'Thoroughbred', 'AtabCode': 'JGD'},
