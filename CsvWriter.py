@@ -71,8 +71,8 @@ def write_to_csv(track, race_num):
         first_race = True
 
 
-    expected_values_dd = compute_expected_value_dd(track, race_num)
-    expected_values_win = compute_expected_value_win(track, race_num)
+
+    expected_values = comp_evs_show(track, race_num)
 
     # below is the building of the 2-d list that will represent the rows
     # and columns in our csv
@@ -119,14 +119,14 @@ def write_to_csv(track, race_num):
         else:
             for i in range(4):
                 row.append(0)
-        if horse_num in expected_values_dd.keys():
-            row.append(expected_values_dd[horse_num]["Expected Value"])
+        if horse_num in expected_values.keys():
+            row.append(expected_values[horse_num]["Show DD EV"])
+            row.append(expected_values[horse_num]["Show Win EV"])
         else:
             row.append(0)
-        if horse_num in expected_values_win.keys():
-            row.append(expected_values_win[horse_num]["Expected Value"])
-        else:
             row.append(0)
+
+
         content.append(row)
 
 
@@ -148,7 +148,7 @@ def write_header(track):
               'Win Pool ($)', 'Place Pool ($)', 'Show Pool ($)',
               'Win Pct', 'Place Pct ($)', 'Show Pct ($)', 'Will Pay', 'DD Implied',
               'Result', 'Win Payout', 'Place Payout', 'Show Payout',
-              'DD EV', 'Win EV']
+              'Show DD EV', 'Show Win EV', 'Place DD EV', 'Place Win EV']
     file_name = 'C:/Users/tylux/Desktop/Projects/Track/Data/' + track + ' Races.csv'
     with open(file_name, 'w', newline='') as f:
         writer = csv.writer(f)

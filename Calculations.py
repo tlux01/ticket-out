@@ -2,7 +2,7 @@ import itertools
 from Get import *
 
 
-def compute_expected_value_win(track, race_num, bet = 0):
+def comp_evs_show(track, race_num, bet = 0):
     """
     Retrieve expected value of each horse in certain race
     based on implied probability of win pool
@@ -40,57 +40,13 @@ def compute_expected_value_win(track, race_num, bet = 0):
     # turns runners into dictionary with horse as key,
     # horse is type string
     runners = change_dictionary(runners)
-    print(runners)
     # all possible top 3 finishers permutations
-    perm = perm_list(active_list)
+    perm = perm_list(active_list, 3)
     perm = list(perm)
     for i in runners.keys():
         ex = compute_expected_payout(i, runners, show_total, perm, "WinPct", bet)
-        runners[i]["Expected Value"] = ex
+        runners[i]["Show Win EV"] = ex
 
-    for horse in runners.keys():
-        print("Win Horse", horse + ':', runners[horse]["Expected Value"])
-
-    return runners
-
-def compute_expected_value_dd(track, race_num, bet = 0):
-    """
-    Retrieve expected value of each horse in certain race
-    based on implied probability of win pool
-
-    :param track: race track you want to pull from
-    :param race_num: race number
-    :return: none
-    """
-    win_show_url = get_url(track, race_num)['WPS']
-
-    r_win_show = requests.get(win_show_url)
-
-    data = r_win_show.json()
-
-    pool_totals = data['PoolTotals']
-    show_total = 0
-
-    # find total amount of money bet in show pool
-    for total in pool_totals:
-        if total['PoolType'] == 'SH':
-            show_total = int(total['Amount'])
-    # entries is dictionary of horses in race
-    entries = data['WPSPools']['Entries']
-    runners = []  # includes all horses
-    active_list = []  # doesn't include scratches
-    for horse in entries:
-        if horse['Win'] != '-2':  # -2 indicates scratch
-            active_list.append(horse["ProgramNumber"])
-            runners.append(horse)
-        else:
-            runners.append("Scratch")
-    # turns runners into dictionary with horse as key,
-    # horse is type string
-    runners = change_dictionary(runners)
-    # all possible top 3 finishers permutations
-    perm = perm_list(active_list)
-    perm = list(perm)
     # will pays and double pool for current race are stored in previous race
     will_pays = collect_will_pays(track, race_num - 1)
     pool_totals = collect_exotic_pools(track, race_num - 1)
@@ -103,19 +59,19 @@ def compute_expected_value_dd(track, race_num, bet = 0):
             runners[horse]["DD Implied"] = will_pays[horse]["DD Implied"] * 100
     for horse in runners.keys():
         ex = compute_expected_payout(horse, runners, show_total, perm, "DD Implied", bet)
-        runners[horse]["Expected Value"] = ex
+        runners[horse]["Show DD EV"] = ex
 
-    for horse in runners.keys():
-        print("DD Horse", horse + ':', runners[horse]["Expected Value"])
     return runners
 
-def perm_list(active_list):
+
+def perm_list(active_list, num):
     """
 
     :param active_list: list of horses
-    :return: list of permutations of size 3 of active_list
+    :param num: length of sequence
+    :return: list of permutations of size num of active_list
     """
-    perm = itertools.permutations(active_list, 3)
+    perm = itertools.permutations(active_list, num)
     return perm
 
 def compute_probabaility(seq, runners, key):

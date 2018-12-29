@@ -7,8 +7,6 @@ track_list = {
               "Gulfstream Park": {'BrisCode': "gp", "TrackType": "Thoroughbred", 'AtabCode': "GPM"},
               "Hawthorne": {'BrisCode': "haw", "TrackType": "Thoroughbred", 'AtabCode': "HAD"},
               "Laurel Park": {'BrisCode': "lrl", 'TrackType': "Thoroughbred", 'AtabCode': 'LRM'},
-              "Test": ["lim", "Thoroughbred"],
-              "The Meadows": ["MEA", "Harness"]
              }
 
 def get_url(track, race_num = '1'):

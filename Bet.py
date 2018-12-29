@@ -5,17 +5,16 @@ import time
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions as EC
 
-def login_info(file_name):
-    """
-    retrieves login credentials and returns them in dictionary
-    :param file_name:
-    :return:
-    """
+def NYRA_login(file_name, driver):
+
     with open(file_name) as f:
         usrName = f.readline().strip("\n")
         pssWrd = f.readline().strip("\n")
     f.close()
-    return {'username': usrName, 'password': pssWrd}
+    driver.find_element_by_name('username').send_keys(usrName)
+    driver.find_element_by_name('password').send_keys(pssWrd)
+    driver.find_element_by_id('gep-login').click()
+    return driver
 
 def place_bet(track_name, bet_amount, program_number):
     """
@@ -28,20 +27,19 @@ def place_bet(track_name, bet_amount, program_number):
     """
 
 
-
-    credentials = login_info('login.txt')
-
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get("https://www.nyrabets.com/#wagering")
+
+
+
+
     driver.switch_to.frame("gepIframe")
 
     driver.find_element_by_link_text(track_name).click()
     driver.switch_to.default_content()
     driver.switch_to.frame("loginFrame")
-    driver.find_element_by_name('username').send_keys(credentials['username'])
-    driver.find_element_by_name('password').send_keys(credentials['password'])
-    driver.find_element_by_id('gep-login').click()
+    driver = NYRA_login('login.txt', driver)
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
 
@@ -62,9 +60,10 @@ def place_bet(track_name, bet_amount, program_number):
     driver.find_element_by_xpath("//button[@class='gep-placeSelected gep-button gep-default']").click()
     div = driver.find_elements_by_xpath("//div[@class='ui-dialog-buttonset']")
     buttons = div[1].find_elements_by_tag_name("button")
+    time.sleep(2)
     for button in buttons:
         print(button.get_attribute("innerText").strip("\n"))
         if button.get_attribute("innerText").strip("\n") == 'Confirm':
             button.click()
-    time.sleep(5)
+    time.sleep(9)
     driver.close()
