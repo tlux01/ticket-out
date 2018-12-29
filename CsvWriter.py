@@ -23,7 +23,7 @@ def track_data_collector(track, start_from = 1):
     if num_races == 0:
         print(track, "had no races today")
     else:
-        race = track_start(track)
+        race = track_info(track)
         first_post_time = race['FirstPostTime']
         status = race['Status']
         collect = False
@@ -80,7 +80,7 @@ def write_to_csv(track, race_num):
     for horse_num in WPS.keys():
         figs = WPS[horse_num]
         row = []
-        date = str(track_start(track)['FirstPostTime'].date())
+        date = str(track_info(track)['FirstPostTime'].date())
         row.append(date), row.append(track)
         row.append(race_num), row.append(horse_num)
         if figs != 'Scratch':

@@ -58,7 +58,7 @@ def collect_WPS(track, race_num):
             totals[num] = "Scratch"
     return totals
 
-def track_start(track):
+def track_info(track):
     """
     returns tracks first start time and if it is open
     :param track:
@@ -71,15 +71,28 @@ def track_start(track):
     for race in data:
         if race["BrisCode"] == track_list[track]["BrisCode"]:
             time = race["FirstPostTime"]
-            if "-05:00" in time:
-                time = time.replace("-05:00", "")
-            else:
-                print("ERROR in time parsing")
-            time = time.replace("T", " ")
-            # change string to datetime
-            time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
-            return {'FirstPostTime': time, 'Status': race['Status']}
+            race["FirstPostTime"] = to_datetime(time)
 
+            return race
+
+def to_datetime(time):
+    if "-05:00" in time:
+        time = time.replace("-05:00", "")
+        time = time.replace("T", " ")
+        # change string to datetime
+        time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+        return time
+    else:
+        print("ERROR in time parsing")
+        raise ValueError
+
+def collect_race_status(track, race_num):
+    schedule_url = get_url(track)['Races']
+    schedule = requests.get(schedule_url)
+    data = schedule.json()
+    for race in data:
+        if int(race['race']) == race_num:
+            return race
 
 def collect_results(track, race_num):
     """
