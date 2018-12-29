@@ -13,6 +13,8 @@ def open_NYRA():
 
 def NYRA_login(file_name, driver):
 
+    driver.switch_to.default_content()
+    driver.switch_to.frame("loginFrame")
     with open(file_name) as f:
         usrName = f.readline().strip("\n")
         pssWrd = f.readline().strip("\n")
@@ -35,8 +37,6 @@ def place_bet(driver, track_name, bet_amount, program_number):
 
     driver.switch_to.frame("gepIframe")
     driver.find_element_by_link_text(track_name).click()
-    driver.switch_to.default_content()
-    driver.switch_to.frame("loginFrame")
     driver = NYRA_login('login.txt', driver)
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
@@ -66,3 +66,4 @@ def place_bet(driver, track_name, bet_amount, program_number):
     # time.sleep(9)
     # driver.close()
     return driver
+
