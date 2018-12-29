@@ -72,8 +72,8 @@ def write_to_csv(track, race_num):
 
 
 
-    expected_values = comp_evs_show(track, race_num)
-
+    ev_show = comp_evs_show(track, race_num)
+    ev_place = comp_evs_place(track, race_num)
     # below is the building of the 2-d list that will represent the rows
     # and columns in our csv
     content = []
@@ -119,13 +119,18 @@ def write_to_csv(track, race_num):
         else:
             for i in range(4):
                 row.append(0)
-        if horse_num in expected_values.keys():
-            row.append(expected_values[horse_num]["Show DD EV"])
-            row.append(expected_values[horse_num]["Show Win EV"])
+        if horse_num in ev_show.keys():
+            row.append(ev_show[horse_num]["Show DD EV"])
+            row.append(ev_show[horse_num]["Show Win EV"])
         else:
             row.append(0)
             row.append(0)
-
+        if horse_num in ev_place.keys():
+            row.append(ev_place[horse_num]["Place DD EV"])
+            row.append(ev_place[horse_num]["Place Win EV"])
+        else:
+            row.append(0)
+            row.append(0)
 
         content.append(row)
 

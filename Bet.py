@@ -5,6 +5,12 @@ import time
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions as EC
 
+def open_NYRA():
+    driver = webdriver.Chrome()
+    driver.maximize_window()
+    driver.get("https://www.nyrabets.com/#wagering")
+    return driver
+
 def NYRA_login(file_name, driver):
 
     with open(file_name) as f:
@@ -16,26 +22,18 @@ def NYRA_login(file_name, driver):
     driver.find_element_by_id('gep-login').click()
     return driver
 
-def place_bet(track_name, bet_amount, program_number):
+def place_bet(driver, track_name, bet_amount, program_number):
     """
     places bet on track on horse correspoding to program number,
     uses selenium so it requires a chrome driver
+    :param driver:
     :param track_name:
     :param bet_amount:
     :param program_number:
     :return:
     """
 
-
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-    driver.get("https://www.nyrabets.com/#wagering")
-
-
-
-
     driver.switch_to.frame("gepIframe")
-
     driver.find_element_by_link_text(track_name).click()
     driver.switch_to.default_content()
     driver.switch_to.frame("loginFrame")
@@ -65,5 +63,6 @@ def place_bet(track_name, bet_amount, program_number):
         print(button.get_attribute("innerText").strip("\n"))
         if button.get_attribute("innerText").strip("\n") == 'Confirm':
             button.click()
-    time.sleep(9)
-    driver.close()
+    # time.sleep(9)
+    # driver.close()
+    return driver

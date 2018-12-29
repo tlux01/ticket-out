@@ -43,9 +43,9 @@ def comp_evs_show(track, race_num, bet = 0):
     # all possible top 3 finishers permutations
     perm = perm_list(active_list, 3)
     perm = list(perm)
-    for i in runners.keys():
-        ex = compute_expected_payout(i, runners, show_total, perm, "WinPct", bet)
-        runners[i]["Show Win EV"] = ex
+    for horse in runners.keys():
+        ex = compute_expected_show_payout(horse, runners, show_total, perm, "WinPct", bet)
+        runners[horse]["Show Win EV"] = ex
 
     # will pays and double pool for current race are stored in previous race
     will_pays = collect_will_pays(track, race_num - 1)
@@ -58,12 +58,63 @@ def comp_evs_show(track, race_num, bet = 0):
             # multiply by 100 as DD Implied is in decimal form
             runners[horse]["DD Implied"] = will_pays[horse]["DD Implied"] * 100
     for horse in runners.keys():
-        ex = compute_expected_payout(horse, runners, show_total, perm, "DD Implied", bet)
+        ex = compute_expected_show_payout(horse, runners, show_total, perm, "DD Implied", bet)
         runners[horse]["Show DD EV"] = ex
 
     return runners
 
+def comp_evs_place(track, race_num, bet = 0):
+    win_show_url = get_url(track, race_num)['WPS']
 
+    r_win_show = requests.get(win_show_url)
+
+    data = r_win_show.json()
+
+    pool_totals = data['PoolTotals']
+    place_total = 0
+
+    # find total amount of money bet in show pool
+    for total in pool_totals:
+        if total['PoolType'] == 'PL':
+            place_total = int(total['Amount']) + bet
+    # entries is dictionary of horses in race
+    entries = data['WPSPools']['Entries']
+    runners = []  # includes all horses
+    active_list = []  # doesn't include scratches
+    for horse in entries:
+        if horse['Win'] != '-2':  # -2 indicates scratch
+            active_list.append(horse["ProgramNumber"])
+            runners.append(horse)
+        else:
+            runners.append("Scratch")
+
+    # turns runners into dictionary with horse as key,
+    # horse is type string
+    runners = change_dictionary(runners)
+    # all possible top 3 finishers permutations
+    perm = perm_list(active_list, 2)
+    perm = list(perm)
+    for horse in runners.keys():
+        ex = compute_expected_place_payout(horse, runners, place_total, perm, "WinPct", bet)
+        runners[horse]["Place Win EV"] = ex
+
+    # will pays and double pool for current race are stored in previous race
+    will_pays = collect_will_pays(track, race_num - 1)
+    pool_totals = collect_exotic_pools(track, race_num - 1)
+    double_total = int(pool_totals['Double'])
+    # get double implied win probabilities
+    will_pays = dd_implied(double_total, will_pays)
+    for horse in will_pays.keys():
+        if will_pays[horse]["Will Pay"] != 'Scratch':
+            # multiply by 100 as DD Implied is in decimal form
+            runners[horse]["DD Implied"] = will_pays[horse]["DD Implied"] * 100
+    for horse in runners.keys():
+        ex = compute_expected_place_payout(horse, runners, place_total, perm, "DD Implied", bet)
+        runners[horse]["Place DD EV"] = ex
+
+    for horse in runners:
+        print(runners[horse])
+    return runners
 def perm_list(active_list, num):
     """
 
@@ -74,7 +125,7 @@ def perm_list(active_list, num):
     perm = itertools.permutations(active_list, num)
     return perm
 
-def compute_probabaility(seq, runners, key):
+def compute_show_prob(seq, runners, key):
     """
     Uses Harville's Equation to compute probability of
     top three finishing in order of seq
@@ -90,7 +141,14 @@ def compute_probabaility(seq, runners, key):
 
     return prob
 
-def compute_payout(seq, runners, show_total, horse, bet):
+def compute_place_prob(seq, runners, key):
+    p_1 = float(runners[seq[0]][key]) / 100  # convert to decimal
+    p_2 = float(runners[seq[1]][key]) / 100
+    prob = (p_1 * p_2) / (1 - p_1)
+
+    return prob
+
+def compute_show_payout(seq, runners, show_total, horse, bet):
     """
     Profit is net pool less gross amount bet on all show finishers.
     Finishers split profit evenly three ways then divide by gross
@@ -117,7 +175,22 @@ def compute_payout(seq, runners, show_total, horse, bet):
     payout = 1 + (profit/a_horse)
     return payout
 
-def compute_expected_payout(horse, runners, show_total, perm, key, bet):
+def compute_place_payout(seq, runners, place_total, horse, bet):
+
+    horse_index = seq.index(horse)  # index of wanted horse
+    a_horse = int(runners[seq[horse_index]]['Place']) + bet
+
+    # remove horse so we always get the other horse as
+    # index 0
+    seq.remove(horse)
+    a_2 = int(runners[seq[0]]['Place'])
+
+    # 16% cut is taken from pool
+    profit = (place_total * .84 - a_horse - a_2) / 2
+    payout = 1 + (profit / a_horse)
+    return payout
+
+def compute_expected_show_payout(horse, runners, show_total, perm, key, bet):
     """
     Computes expected payout of horse
 
@@ -132,10 +205,22 @@ def compute_expected_payout(horse, runners, show_total, perm, key, bet):
     for i in range(len(perm)):
         seq = list(perm[i])
         if horse in seq:
-            prob = compute_probabaility(seq, runners, key)
+            prob = compute_show_prob(seq, runners, key)
             prob_total += prob
-            payout = compute_payout(seq, runners, show_total, horse, bet)
+            payout = compute_show_payout(seq, runners, show_total, horse, bet)
             expected_value += prob*payout
+    return expected_value
+
+def compute_expected_place_payout(horse, runners, show_total, perm, key, bet):
+    expected_value = 0
+    prob_total = 0
+    for i in range(len(perm)):
+        seq = list(perm[i])
+        if horse in seq:
+            prob = compute_place_prob(seq, runners, key)
+            prob_total += prob
+            payout = compute_place_payout(seq, runners, show_total, horse, bet)
+            expected_value += prob * payout
     return expected_value
 
 def dd_implied(double_total, will_pays):
