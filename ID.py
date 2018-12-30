@@ -1,12 +1,19 @@
 
 track_list = {
+              "Los Alamitos QH" : {'BrisCode': "la", 'TrackType': "Thoroughbred", 'AtabCode': 'LQN'},
               "Aqueduct": {'BrisCode': "aqu", "TrackType": "Thoroughbred", 'AtabCode': 'AQD'},
               "Churchill Downs": {'BrisCode': "CD", "TrackType": "Thoroughbred", 'AtabCode': None},
               "Del Mar": {'BrisCode': "DMR", "TrackType": "Thoroughbred", 'AtabCode': None},
               "Fair Grounds": {'BrisCode': 'fg', 'TrackType': 'Thoroughbred', 'AtabCode': 'JGD'},
+              "Gold Gate Fields" : {'BrisCode': "gg", 'TrackType': "Thoroughbred", 'AtabCode': 'GGD'},
               "Gulfstream Park": {'BrisCode': "gp", "TrackType": "Thoroughbred", 'AtabCode': "GPM"},
               "Hawthorne": {'BrisCode': "haw", "TrackType": "Thoroughbred", 'AtabCode': "HAD"},
               "Laurel Park": {'BrisCode': "lrl", 'TrackType': "Thoroughbred", 'AtabCode': 'LRM'},
+              "Penn National" : {'BrisCode': "lrl", 'TrackType': "Thoroughbred", 'AtabCode': 'LRM'},
+              "Santa Anita Park" : {'BrisCode': "sa", 'TrackType': "Thoroughbred", 'AtabCode': 'SAD'},
+              "Sunland Park" : {'BrisCode': "sun", 'TrackType': "Thoroughbred", 'AtabCode': 'SND'},
+              "Turf Paradise" : {'BrisCode': 'tup', 'TrackType': "Thoroughbred", 'AtabCode': 'TUD'},
+              "Turfway Park" : {}
              }
 
 def get_url(track, race_num = '1'):
