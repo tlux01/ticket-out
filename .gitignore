@@ -1,6 +1,7 @@
 .idea/
 __pycache__
 Data/
+Archives/
 chromedriver.exe
 GetTest.py
 Scraper.py

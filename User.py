@@ -2,9 +2,9 @@ from CsvWriter import *
 import time
 # This portion of the code is in the task scheduler
 
-#track_data_collector("Del Mar")
-track_data_collector("Aqueduct")
-track_data_collector("Gulfstream Park")
-track_data_collector("Laurel Park")
-track_data_collector("Fair Grounds")
-track_data_collector("Hawthorne")
+if __name__ == '__main__':
+    for track in track_list.keys():
+        try:
+            track_data_collector(track)
+        except:
+            pass

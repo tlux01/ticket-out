@@ -5,7 +5,7 @@ track_list = {
               "Churchill Downs": {'BrisCode': "CD", "TrackType": "Thoroughbred", 'AtabCode': None},
               "Del Mar": {'BrisCode': "DMR", "TrackType": "Thoroughbred", 'AtabCode': None},
               "Fair Grounds": {'BrisCode': 'fg', 'TrackType': 'Thoroughbred', 'AtabCode': 'JGD'},
-              "Gold Gate Fields" : {'BrisCode': "gg", 'TrackType': "Thoroughbred", 'AtabCode': 'GGD'},
+              "Golden Gate Fields" : {'BrisCode': "gg", 'TrackType': "Thoroughbred", 'AtabCode': 'GGD'},
               "Gulfstream Park": {'BrisCode': "gp", "TrackType": "Thoroughbred", 'AtabCode': "GPM"},
               "Hawthorne": {'BrisCode': "haw", "TrackType": "Thoroughbred", 'AtabCode': "HAD"},
               "Laurel Park": {'BrisCode': "lrl", 'TrackType': "Thoroughbred", 'AtabCode': 'LRM'},

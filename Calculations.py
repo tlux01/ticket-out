@@ -40,6 +40,7 @@ def comp_evs_show(track, race_num, bet = 0):
     # turns runners into dictionary with horse as key,
     # horse is type string
     runners = change_dictionary(runners)
+    print(runners)
     # all possible top 3 finishers permutations
     perm = perm_list(active_list, 3)
     perm = list(perm)
@@ -53,6 +54,7 @@ def comp_evs_show(track, race_num, bet = 0):
     double_total = int(pool_totals['Double'])
     # get double implied win probabilities
     will_pays = dd_implied(double_total, will_pays)
+    print(will_pays)
     for horse in will_pays.keys():
         if will_pays[horse]["Will Pay"] != 'Scratch':
             # multiply by 100 as DD Implied is in decimal form
@@ -242,3 +244,21 @@ def dd_implied(double_total, will_pays):
 
     return will_pays
 
+def bet_or_cancel(horse_evs, threshold = 1.1):
+    """
+    returns if we should bet out not, if the average of Show Win EV
+    and Show DD EV is above the threshold we output True, otherwise
+    outputs False, meaning we cancel bet
+    :param horse_evs:
+    :param threshold:
+    :return:
+    """
+    win = horse_evs["Show Win EV"]
+    dd = horse_evs["Show DD EV"]
+    if win > 1 and dd > 1:
+        avg = (win + dd) / 2
+        if avg > threshold:
+            print(avg)
+            return True
+
+    return False
