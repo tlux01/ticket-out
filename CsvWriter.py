@@ -134,9 +134,9 @@ def write_to_csv(track, race_num):
 
         content.append(row)
 
+    file_name = 'Data/' + track + ' Races.csv'
+    file_name = os.path.join(os.getcwd(), file_name)
 
-
-    file_name = 'C:/Users/tylux/Desktop/Projects/Track/Data/'+ track + ' Races.csv'
     with open(file_name, 'a', newline='') as f:
         writer = csv.writer(f)
         for i in range(len(content)):
@@ -154,7 +154,9 @@ def write_header(track):
               'Win Pct', 'Place Pct ($)', 'Show Pct ($)', 'Will Pay', 'DD Implied',
               'Result', 'Win Payout', 'Place Payout', 'Show Payout',
               'Show DD EV', 'Show Win EV', 'Place DD EV', 'Place Win EV']
-    file_name = 'C:/Users/tylux/Desktop/Projects/Track/Data/' + track + ' Races.csv'
+
+    file_name = 'Data/' + track + ' Races.csv'
+    file_name = os.path.join(os.getcwd(), file_name)
     with open(file_name, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(header)

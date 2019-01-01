@@ -26,6 +26,7 @@ def comp_evs_show(track, race_num, bet = 0):
     for total in pool_totals:
         if total['PoolType'] == 'SH':
             show_total = int(total['Amount']) + bet
+    print(show_total)
     # entries is dictionary of horses in race
     entries = data['WPSPools']['Entries']
     runners = [] # includes all horses

@@ -28,12 +28,12 @@ def monitor(track):
                 go_to_race(driver, current_race, track_list[track]["NYRA"])
                 track_stat = track_info(track)
                 current_race = track_stat["RaceNum"]
-                show_ev = comp_evs_show(track, current_race, 1)
+                show_ev = comp_evs_show(track, current_race, 2)
                 for horse in show_ev.keys():
                     print(horse, end=" ")
                     if bet_or_cancel(show_ev[horse]):
                         if horse not in bet_list.keys():
-                            id = place_bet(driver, 1, horse)
+                            id = place_bet(driver, 2, horse)
                             bet_list[horse] = id
                             print("--------------------------")
                             print("Bet on horse", horse)
