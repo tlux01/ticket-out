@@ -22,9 +22,22 @@ def NYRA_login(file_name, driver):
     driver.find_element_by_name('username').send_keys(usrName)
     driver.find_element_by_name('password').send_keys(pssWrd)
     driver.find_element_by_id('gep-login').click()
-    return driver
 
-def place_bet(driver, track_name, bet_amount, program_number):
+
+
+def go_to_track(driver, track):
+
+    driver.switch_to.default_content()
+    driver.switch_to.frame("gepIframe")
+    driver.find_element_by_link_text(track).click()
+
+def go_to_race(driver, race_num):
+
+    driver.switch_to.default_content()
+    driver.switch_to.frame("gepIframe")
+    driver.find_element_by_link_text("Race " + str(race_num)).click()
+
+def place_bet(driver, bet_amount, program_number):
     """
     places bet on track on horse correspoding to program number,
     uses selenium so it requires a chrome driver
@@ -35,17 +48,14 @@ def place_bet(driver, track_name, bet_amount, program_number):
     :return:
     """
 
-    driver.switch_to.frame("gepIframe")
-    driver.find_element_by_link_text(track_name).click()
-    driver = NYRA_login('login.txt', driver)
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
-
-    driver.find_element_by_xpath("//select[@class='gep-pools']/option[text()='PLC']").click()
+    driver.find_element_by_xpath("//select[@class='gep-pools']/option[text()='SHW']").click()
     program = "//input[@programnumber = '" + str(program_number) + "']"
     # avoids stale error based on fast DOM load
     attempts = 0
     while attempts < 100:
+        time.sleep(.5)
         attempts += 1
         try:
             driver.find_element_by_xpath(program).click()
@@ -58,12 +68,50 @@ def place_bet(driver, track_name, bet_amount, program_number):
     driver.find_element_by_xpath("//button[@class='gep-placeSelected gep-button gep-default']").click()
     div = driver.find_elements_by_xpath("//div[@class='ui-dialog-buttonset']")
     buttons = div[1].find_elements_by_tag_name("button")
-    time.sleep(2)
+
     for button in buttons:
-        print(button.get_attribute("innerText").strip("\n"))
         if button.get_attribute("innerText").strip("\n") == 'Confirm':
             button.click()
+    receipt = driver.find_element_by_xpath("//div[@class='gep-receiptLine']")
+    id = receipt.find_element_by_class_name("gep-value").get_attribute("innerHTML")
+    print(id)
     # time.sleep(9)
     # driver.close()
-    return driver
 
+def cancel_bet(bet_id, driver):
+    #driver = webdriver.Chrome()
+    driver.switch_to.default_content()
+    driver.switch_to.frame("gepIframe")
+    driver.find_element_by_xpath("//a[@href='#gep-betHistory']").click()
+    driver.find_element_by_xpath("//select[@class='gep-trackracefilter']"
+                                 "/option[text()='This Race']").click()
+    driver.implicitly_wait(2)
+    #second expand all is what we want
+    driver.find_elements_by_xpath("//a[@class='gep-expandAll']")[1].click()
+
+    driver.implicitly_wait(2)
+    list = driver.find_element_by_class_name("gep-list")
+    list = list.find_elements_by_xpath("//div[@class='gep-bet gep-status-none  gep-betCategory5']")
+    for item in list:
+        info = item.find_element_by_class_name("gep-extraInfo")
+        info = info.find_elements_by_class_name("gep-receiptLine")
+        button = item.find_element_by_class_name("gep-betSelectorBox")
+        button.click()
+        for line in info:
+            l = line.find_element_by_class_name("gep-attrib").get_attribute("innerHTML")
+            if l == "Ticket #:":
+                id = line.find_element_by_class_name("gep-value").get_attribute("innerHTML")
+                print(id)
+            if l == "Status:":
+                status = line.find_element_by_class_name("gep-value").get_attribute("innerHTML")
+                print(status)
+
+def wrapper():
+    driver = open_NYRA()
+    driver.implicitly_wait(10)
+    NYRA_login("login.txt", driver)
+    go_to_track(driver, "Golden Gate")
+    go_to_race(driver, 5)
+    #place_bet(driver, 3, 3)
+    time.sleep(3)
+    cancel_bet(1, driver)
