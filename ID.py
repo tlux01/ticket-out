@@ -1,20 +1,28 @@
-
+# BrisCode, TrackType, and AtabCode are for twinspires url
+# NYRA is for name of track on NYRA Bets
 track_list = {
-              "Los Alamitos QH" : {'BrisCode': "la", 'TrackType': "Thoroughbred", 'AtabCode': 'LQN'},
               "Aqueduct": {'BrisCode': "aqu", "TrackType": "Thoroughbred", 'AtabCode': 'AQD',
                            'NYRA': 'Aqueduct'},
               "Churchill Downs": {'BrisCode': "CD", "TrackType": "Thoroughbred", 'AtabCode': None},
               "Del Mar": {'BrisCode': "DMR", "TrackType": "Thoroughbred", 'AtabCode': None},
-              "Fair Grounds": {'BrisCode': 'fg', 'TrackType': 'Thoroughbred', 'AtabCode': 'JGD'},
+              "Fair Grounds": {'BrisCode': 'fg', 'TrackType': 'Thoroughbred', 'AtabCode': 'JGD',
+                               'NYRA': 'Fair Grounds'},
               "Golden Gate Fields" : {'BrisCode': "gg", 'TrackType': "Thoroughbred", 'AtabCode': 'GGD'},
-              "Gulfstream Park": {'BrisCode': "gp", "TrackType": "Thoroughbred", 'AtabCode': "GPM"},
+              "Gulfstream Park": {'BrisCode': "gp", "TrackType": "Thoroughbred", 'AtabCode': "GPM",
+                                  'NYRA': 'Gulfstream'},
               "Hawthorne": {'BrisCode': "haw", "TrackType": "Thoroughbred", 'AtabCode': "HAD"},
-              "Laurel Park": {'BrisCode': "lrl", 'TrackType': "Thoroughbred", 'AtabCode': 'LRM'},
+              "Laurel Park": {'BrisCode': "lrl", 'TrackType': "Thoroughbred", 'AtabCode': 'LRM',
+                              'NYRA': 'Laurel'},
+              "Los Alamitos QH" : {'BrisCode': "la", 'TrackType': "Thoroughbred", 'AtabCode': 'LQN'},
               "Penn National" : {'BrisCode': "lrl", 'TrackType': "Thoroughbred", 'AtabCode': 'LRM'},
-              "Santa Anita Park" : {'BrisCode': "sa", 'TrackType': "Thoroughbred", 'AtabCode': 'SAD'},
-              "Sunland Park" : {'BrisCode': "sun", 'TrackType': "Thoroughbred", 'AtabCode': 'SND'},
-              "Turf Paradise" : {'BrisCode': 'tup', 'TrackType': "Thoroughbred", 'AtabCode': 'TUD'},
-              "Turfway Park" : {}
+              "Santa Anita Park" : {'BrisCode': "sa", 'TrackType': "Thoroughbred", 'AtabCode': 'SAD',
+                                    'NYRA': 'Santa Anita'},
+              "Sunland Park" : {'BrisCode': "sun", 'TrackType': "Thoroughbred", 'AtabCode': 'SND',
+                                'NYRA': 'Sunland Park'},
+              "Turf Paradise" : {'BrisCode': 'tup', 'TrackType': "Thoroughbred", 'AtabCode': 'TUD',
+                                 'NYRA': 'Turf Paradise'},
+              "Turfway Park" : {'BrisCode': 'tp', 'TrackType': "Thoroughbred", 'AtabCode': 'TPD',
+                                 'NYRA': 'Turfway Park'}
              }
 
 def get_url(track, race_num = '1'):

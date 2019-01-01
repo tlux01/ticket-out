@@ -30,18 +30,22 @@ def monitor(track):
                 current_race = track_stat["RaceNum"]
                 show_ev = comp_evs_show(track, current_race)
                 for horse in show_ev.keys():
+                    print(horse, end=" ")
                     if bet_or_cancel(show_ev[horse]):
-                        print("--------------------------")
-                        print("Bet on horse", horse)
-                        print("--------------------------")
                         if horse not in bet_list.keys():
                             id = place_bet(driver, 1, horse)
                             bet_list[horse] = id
+                            print("--------------------------")
+                            print("Bet on horse", horse)
+                            print("--------------------------")
                     else:
                         if horse in bet_list.keys():
                             go_to_race(driver, current_race, track)
                             cancel_bet(driver, bet_list[horse])
                             bet_list.pop(horse)
+                            print("--------------------------")
+                            print("Canceled bet on horse", horse)
+                            print("--------------------------")
 
                 race_stat = collect_race_status(track, current_race)
                 print(bet_list)
@@ -54,9 +58,9 @@ def monitor(track):
                 avg = (show_ev[horse]["Show Win EV"] * .5) + \
                       (show_ev[horse]["Show DD EV"] * .5)
                 print(horse + ":", str(avg))
-    else:
-        print("Race", current_race, "is", race_stat["raceStatus"])
-        driver.close()
+
+    print("Race", current_race, "is", race_stat["raceStatus"])
+    driver.close()
 
 
 def monitor_wrapper(track):

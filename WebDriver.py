@@ -74,8 +74,13 @@ def place_bet(driver, bet_amount, program_number):
     for button in buttons:
         if button.get_attribute("innerText").strip("\n") == 'Confirm':
             button.click()
+    time.sleep(2)
     receipt = driver.find_element_by_xpath("//div[@class='gep-receiptLine']")
     id = receipt.find_element_by_class_name("gep-value").get_attribute("innerHTML")
+    #error checking for not recieving the right ticket id #
+    if len(id) == 1:
+        raise RuntimeError
+
     return id
     # time.sleep(9)
     # driver.close()
