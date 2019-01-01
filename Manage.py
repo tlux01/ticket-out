@@ -28,7 +28,7 @@ def monitor(track):
                 go_to_race(driver, current_race, track_list[track]["NYRA"])
                 track_stat = track_info(track)
                 current_race = track_stat["RaceNum"]
-                show_ev = comp_evs_show(track, current_race)
+                show_ev = comp_evs_show(track, current_race, 1)
                 for horse in show_ev.keys():
                     print(horse, end=" ")
                     if bet_or_cancel(show_ev[horse]):
