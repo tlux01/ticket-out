@@ -1,12 +1,16 @@
 from selenium import webdriver
 import time
+import os
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.common.keys import Keys
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions as EC
 
 def open_NYRA():
-    driver = webdriver.Chrome()
+    PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+    DRIVER_BIN = os.path.join(PROJECT_ROOT, "chromedriver")
+
+    driver = webdriver.Chrome(executable_path=DRIVER_BIN)
     driver.maximize_window()
     driver.get("https://www.nyrabets.com/#wagering")
     return driver

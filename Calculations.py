@@ -60,7 +60,7 @@ def comp_evs_show(track, race_num, bet = 0):
     for horse in runners.keys():
         ex = compute_expected_show_payout(horse, runners, show_total, perm, "DD Implied", bet)
         runners[horse]["Show DD EV"] = ex
-
+    print(runners)
     return runners
 
 def comp_evs_place(track, race_num, bet = 0):
