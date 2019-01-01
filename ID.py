@@ -1,7 +1,8 @@
 
 track_list = {
               "Los Alamitos QH" : {'BrisCode': "la", 'TrackType': "Thoroughbred", 'AtabCode': 'LQN'},
-              "Aqueduct": {'BrisCode': "aqu", "TrackType": "Thoroughbred", 'AtabCode': 'AQD'},
+              "Aqueduct": {'BrisCode': "aqu", "TrackType": "Thoroughbred", 'AtabCode': 'AQD',
+                           'NYRA': 'Aqueduct'},
               "Churchill Downs": {'BrisCode': "CD", "TrackType": "Thoroughbred", 'AtabCode': None},
               "Del Mar": {'BrisCode': "DMR", "TrackType": "Thoroughbred", 'AtabCode': None},
               "Fair Grounds": {'BrisCode': 'fg', 'TrackType': 'Thoroughbred', 'AtabCode': 'JGD'},
