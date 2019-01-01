@@ -49,7 +49,7 @@ def monitor(track):
 
                 race_stat = collect_race_status(track, current_race)
                 print(bet_list)
-                time.sleep(10)
+                time.sleep(5)
 
 
             #prints final expected values after close
