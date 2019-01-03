@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 import time
 import os
 # from selenium.webdriver.common.by import By
@@ -57,11 +58,16 @@ def place_bet(driver, bet_amount, program_number, bet_list):
 
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
-    driver.find_element_by_xpath("//select[@class='gep-pools']/option[text()='SHW']").click()
+    try:
+        driver.find_element_by_xpath("//select[@class='gep-pools']/option[text()='SHW']").click()
+    except NoSuchElementException:
+        print("No show bets at this race")
+        return bet_list
     program = "//input[@programnumber = '" + str(program_number) + "']"
     # avoids stale error based on fast DOM load
     attempts = 0
     while attempts < 20:
+        time.sleep(.5)
         attempts += 1
         try:
             driver.find_element_by_xpath(program).click()
@@ -126,10 +132,11 @@ def cancel_bet(driver, bet_list, horse):
         if ui_button.get_attribute("innerText").strip("\n") == 'Confirm':
             ui_button.click()
     time.sleep(1)
-    print(driver.find_element_by_xpath("//span[@class='gep-error']").is_displayed())
-    if driver.find_element_by_xpath("//span[@class='gep-error']").is_displayed():
+
+    try:
+        driver.find_element_by_xpath("//span[@class='gep-error']")
         print("Could not cancel bet on", bet_id)
-    else:
+    except:
         bet_list.pop(horse)
         print("--------------------------")
         print("Canceled bet on horse", horse)
@@ -164,3 +171,6 @@ def wrapper():
     go_to_race(driver, 2)
     place_bet(driver, '3', 3)
     cancel_bet(driver, '03626871207807')
+
+p = "ui-accordion-leftNavAccordian-header-3" #id
+#driver.find_element_by_id("ui-accordion-leftNavAccordian-header-3").click()
