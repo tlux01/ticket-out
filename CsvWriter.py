@@ -38,6 +38,8 @@ def track_data_collector(track, start_from = 1):
                 collect = True
             else:
                 print(track, " has not closed yet")
+                race = track_info(track)
+                status = race['Status']
                 # if too early waits 5 minutes before checking again
                 time.sleep(300)
 

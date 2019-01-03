@@ -85,6 +85,9 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     if len(id) == 1:
         raise RuntimeError
     bet_list[program_number] = id
+    print("--------------------------")
+    print("Bet on horse", program_number)
+    print("--------------------------")
     return bet_list
     # time.sleep(9)
     # driver.close()
@@ -128,6 +131,9 @@ def cancel_bet(driver, bet_list, horse):
         print("Could not cancel bet on", bet_id)
     else:
         bet_list.pop(horse)
+        print("--------------------------")
+        print("Canceled bet on horse", horse)
+        print("--------------------------")
 
     #click close
     driver.find_element_by_xpath("//button[@class='gep-close gep-button gep-default']").click()
