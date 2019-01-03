@@ -42,9 +42,9 @@ def go_to_race(driver, race_num, track):
         pass
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
-    driver.find_element_by_link_text("Race " + str(race_num)).click()
+    driver.find_element_by_partial_link_text("Race " + str(race_num)).click()
 
-def place_bet(driver, bet_amount, program_number):
+def place_bet(driver, bet_amount, program_number, bet_list):
     """
     places bet on track on horse correspoding to program number,
     uses selenium so it requires a chrome driver
@@ -61,7 +61,7 @@ def place_bet(driver, bet_amount, program_number):
     program = "//input[@programnumber = '" + str(program_number) + "']"
     # avoids stale error based on fast DOM load
     attempts = 0
-    while attempts < 2:
+    while attempts < 20:
         attempts += 1
         try:
             driver.find_element_by_xpath(program).click()
@@ -84,13 +84,13 @@ def place_bet(driver, bet_amount, program_number):
     #error checking for not recieving the right ticket id #
     if len(id) == 1:
         raise RuntimeError
-
-    return id
+    bet_list[program_number] = id
+    return bet_list
     # time.sleep(9)
     # driver.close()
 
-def cancel_bet(driver, bet_id):
-    #driver = webdriver.Chrome()
+def cancel_bet(driver, bet_list, horse):
+    bet_id = bet_list[horse]
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
     driver.find_element_by_xpath("//a[@href='#gep-betHistory']").click()
@@ -122,8 +122,33 @@ def cancel_bet(driver, bet_id):
     for ui_button in ui_buttons:
         if ui_button.get_attribute("innerText").strip("\n") == 'Confirm':
             ui_button.click()
+    time.sleep(1)
+    print(driver.find_element_by_xpath("//span[@class='gep-error']").is_displayed())
+    if driver.find_element_by_xpath("//span[@class='gep-error']").is_displayed():
+        print("Could not cancel bet on", bet_id)
+    else:
+        bet_list.pop(horse)
+
     #click close
     driver.find_element_by_xpath("//button[@class='gep-close gep-button gep-default']").click()
+    return bet_list
+
+def track_open(driver):
+    """
+    once on correct page, returns the MTP of current webpage
+    :return:
+    """
+    header = driver.find_element_by_class_name("gep-raceDetails")
+    header = header.find_elements_by_tag_name("span")
+    header = header[0].get_attribute("innerHTML")
+    info = header.split()
+    MTP = info[0]
+    if MTP == 'OFF':
+        return MTP
+    elif MTP == 'FIN':
+        return MTP
+    else:
+        return int(MTP)
 
 def wrapper():
     driver = open_NYRA()
