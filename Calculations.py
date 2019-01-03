@@ -172,6 +172,7 @@ def compute_show_payout(seq, runners, show_total, horse, bet):
     # 16% cut is taken from pool
     profit = (show_total *.84 - a_horse - a_2 - a_3) / 3
     payout = 1 + (profit/a_horse)
+    payout = max(payout, 1.05)
     return payout
 
 def compute_place_payout(seq, runners, place_total, horse, bet):
