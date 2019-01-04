@@ -34,6 +34,7 @@ def track_data_collector(track, start_from = 1):
                     try:
                         write_to_csv(track, i)
                     except Exception as e:
+                        print(type(e).__name__)
                         print("Race", i, "had error", e)
                 collect = True
             else:

@@ -3,9 +3,8 @@ from WebDriver import *
 import time
 
 bet = 2
-def monitor(driver, track):
+def monitor(driver, track, bet_list):
 
-    bet_list = {}
     driver.implicitly_wait(3)
     NYRA_login("login.txt", driver)
     go_to_track(driver, track_list[track]["NYRA"])
@@ -68,11 +67,17 @@ def monitor(driver, track):
 
 
 def monitor_wrapper(track):
+    bet_list = {}
     driver = open_NYRA()
     try:
-        driver = monitor(driver, track)
+        driver = monitor(driver, track, bet_list)
     except Exception as e:
         print(e)
+        print(bet_list)
+        bets = bet_list.keys()
+        for horse in bets:
+            cancel_bet(driver, bet_list, horse)
+    print(bet_list)
     return driver
 
 def monitor1():

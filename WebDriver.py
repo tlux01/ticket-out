@@ -8,6 +8,11 @@ import os
 # from selenium.webdriver.support import expected_conditions as EC
 
 def open_NYRA():
+    """
+    opens chrome webdriver and goes to NYRA bets
+    :return:
+    """
+    # store chromedriver in same directory as python files
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
     DRIVER_BIN = os.path.join(PROJECT_ROOT, "chromedriver")
 
@@ -16,12 +21,17 @@ def open_NYRA():
     driver.get("https://www.nyrabets.com/#wagering")
     return driver
 
-def NYRA_login(file_name, driver):
-
+def NYRA_login(driver, file_name):
+    """
+    Logs into NYRA site based on info in file name
+    :param driver: current webdriver instance
+    :param file_name: name of file with login details
+    :return:
+    """
     driver.switch_to.default_content()
     driver.switch_to.frame("loginFrame")
     with open(file_name) as f:
-        usrName = f.readline().strip("\n")
+        usrName = f.readline().strip("\n") # removes new line character
         pssWrd = f.readline().strip("\n")
     f.close()
     driver.find_element_by_name('username').send_keys(usrName)
@@ -29,9 +39,13 @@ def NYRA_login(file_name, driver):
     driver.find_element_by_id('gep-login').click()
 
 
-
 def go_to_track(driver, track):
-
+    """
+    goes to specified track after we
+    :param driver:
+    :param track:
+    :return:
+    """
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
     driver.find_element_by_link_text(track).click()
@@ -66,7 +80,7 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     program = "//input[@programnumber = '" + str(program_number) + "']"
     # avoids stale error based on fast DOM load
     attempts = 0
-    while attempts < 20:
+    while attempts < 10:
         time.sleep(.5)
         attempts += 1
         try:
@@ -74,7 +88,9 @@ def place_bet(driver, bet_amount, program_number, bet_list):
             break
         except Exception as e:
             print(e)
-
+    if attempts == 10:
+        print("Could not place bet on", program_number)
+        return bet_list
     driver.find_element_by_xpath("//input[@class='gep-inputcontrol-stake']").clear()
     driver.find_element_by_xpath("//input[@class='gep-inputcontrol-stake']").send_keys(str(bet_amount))
     driver.find_element_by_xpath("//button[@class='gep-placeSelected gep-button gep-default']").click()
@@ -87,9 +103,10 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     time.sleep(2)
     receipt = driver.find_element_by_xpath("//div[@class='gep-receiptLine']")
     id = receipt.find_element_by_class_name("gep-value").get_attribute("innerHTML")
-    #error checking for not recieving the right ticket id #
+    # error checking for not recieving the right ticket id #
     if len(id) == 1:
-        raise RuntimeError
+        raise ValueError
+
     bet_list[program_number] = id
     print("--------------------------")
     print("Bet on horse", program_number)
@@ -127,7 +144,8 @@ def cancel_bet(driver, bet_list, horse):
 
     #cancel bet
     driver.find_element_by_xpath("//button[@class='gep-cancel gep-button gep-default']").click()
-    ui_buttons = driver.find_elements_by_xpath("//button[@class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only']")
+    ui_buttons = driver.find_elements_by_xpath("//button[@class='ui-button ui-widget ui-state-default"
+                                               " ui-corner-all ui-button-text-only']")
     for ui_button in ui_buttons:
         if ui_button.get_attribute("innerText").strip("\n") == 'Confirm':
             ui_button.click()
@@ -148,13 +166,14 @@ def cancel_bet(driver, bet_list, horse):
 
 def track_open(driver):
     """
-    once on correct page, returns the MTP of current webpage
+    once on correct page, returns the MTP of the track,
+    can be OFF or FIN as well
     :return:
     """
     header = driver.find_element_by_class_name("gep-raceDetails")
-    header = header.find_elements_by_tag_name("span")
-    header = header[0].get_attribute("innerHTML")
-    info = header.split()
+    span = header.find_elements_by_tag_name("span")
+    innerHTML = span[0].get_attribute("innerHTML")
+    info = header.split() # because inner HTML can be of form "22 MTP"
     MTP = info[0]
     if MTP == 'OFF':
         return MTP
@@ -163,14 +182,6 @@ def track_open(driver):
     else:
         return int(MTP)
 
-def wrapper():
-    driver = open_NYRA()
-    driver.implicitly_wait(10)
-    NYRA_login("login.txt", driver)
-    go_to_track(driver, "Aqueduct")
-    go_to_race(driver, 2)
-    place_bet(driver, '3', 3)
-    cancel_bet(driver, '03626871207807')
 
-p = "ui-accordion-leftNavAccordian-header-3" #id
+# p = "ui-accordion-leftNavAccordian-header-3" #id
 #driver.find_element_by_id("ui-accordion-leftNavAccordian-header-3").click()
