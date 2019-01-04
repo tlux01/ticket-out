@@ -173,7 +173,7 @@ def track_open(driver):
     header = driver.find_element_by_class_name("gep-raceDetails")
     span = header.find_elements_by_tag_name("span")
     innerHTML = span[0].get_attribute("innerHTML")
-    info = header.split() # because inner HTML can be of form "22 MTP"
+    info = innerHTML.split() # because inner HTML can be of form "22 MTP"
     MTP = info[0]
     if MTP == 'OFF':
         return MTP

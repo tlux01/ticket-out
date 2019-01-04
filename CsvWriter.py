@@ -12,10 +12,10 @@ def track_data_collector(track, start_from = 1):
     :return:
     """
 
-    filename = track + " Races.csv"
-    print(filename)
+    file_name = 'Data/' + track + ' Races.csv'
+    file_name = os.path.join(os.getcwd(), file_name)
     # writes new file if file not in our Data folder
-    if not os.path.isfile('C:/Users/tylux/Desktop/Projects/Track/Data/' + filename):
+    if not os.path.isfile(file_name):
         write_header(track)
     # want to wait until thirty minutes after the post time so results
     # can get in

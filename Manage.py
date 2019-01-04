@@ -6,7 +6,7 @@ bet = 2
 def monitor(driver, track, bet_list):
 
     driver.implicitly_wait(3)
-    NYRA_login("login.txt", driver)
+    NYRA_login(driver, "login.txt")
     go_to_track(driver, track_list[track]["NYRA"])
     track_stat = track_info(track)
     current_race = int(track_stat["RaceNum"])
