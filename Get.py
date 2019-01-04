@@ -170,9 +170,13 @@ def collect_will_pays(track, race_num):
             for horse in entries:
                 will_pays[horse['ProgramNumber']] = {}
                 # if horse doesn't have value produces error, means scratch
-                try:
-                    will_pays[horse['ProgramNumber']]['Will Pay'] = float(horse['Value'])
-                except (KeyError, ValueError):
+                if 'Value' in horse.keys():
+                    val = horse['Value']
+                    if val == ' SC':
+                        will_pays[horse['ProgramNumber']]['Will Pay'] = 'Scratch'
+                    else:
+                        will_pays[horse['ProgramNumber']]['Will Pay'] = float(horse['Value'])
+                else:
                     will_pays[horse['ProgramNumber']]['Will Pay'] = 'Scratch'
     return will_pays
 

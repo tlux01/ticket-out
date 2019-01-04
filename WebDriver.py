@@ -48,7 +48,11 @@ def go_to_track(driver, track):
     """
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
-    driver.find_element_by_link_text(track).click()
+    try:
+        driver.find_element_by_link_text(track).click()
+    except:
+        driver.find_element_by_id("ui-accordion-leftNavAccordian-header-3").click()
+        driver.find_element_by_link_text(track).click()
 
 def go_to_race(driver, race_num, track):
     try:
@@ -119,12 +123,25 @@ def cancel_bet(driver, bet_list, horse):
     bet_id = bet_list[horse]
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
+
+    #to make sure bets load, three clicks to refresh page
     driver.find_element_by_xpath("//a[@href='#gep-betHistory']").click()
+    driver.find_element_by_xpath("//a[@href='#gep-betSlip']").click()
+    driver.find_element_by_xpath("//a[@href='#gep-betHistory']").click()
+    time.sleep(1)
     driver.find_element_by_xpath("//select[@class='gep-trackracefilter']"
                                  "/option[text()='This Race']").click()
 
-    #second expand all is what we want
-    driver.find_elements_by_xpath("//a[@class='gep-expandAll']")[1].click()
+    attempts = 0
+    while attempts < 10:
+        time.sleep(.5)
+        attempts += 1
+        try:
+            # second expand all is what we want
+            driver.find_elements_by_xpath("//a[@class='gep-expandAll']")[1].click()
+            break
+        except Exception as e:
+            print(e)
 
 
     list = driver.find_element_by_class_name("gep-list")
@@ -152,6 +169,7 @@ def cancel_bet(driver, bet_list, horse):
     time.sleep(1)
 
     try:
+        # gep-error will show if we cannot get bet up in time
         driver.find_element_by_xpath("//span[@class='gep-error']")
         print("Could not cancel bet on", bet_id)
     except:
