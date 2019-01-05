@@ -140,10 +140,22 @@ def monitor1():
         print(active_queue)
         for track in active_queue:
             print(track)
-            for race in bet_list[track].keys():
-                print(race, bet_list[track][race])
+            current_race = active_queue[track]['Current Race']
+            print(current_race, bet_list[track][current_race])
 
-        time.sleep(5)
+        # checks if active queue is empty
+        print(open_tracks)
+        if not active_queue:
+            min_mtp = min_MTP(open_tracks)
+            if min_mtp == None:
+                print("No more tracks today")
+                driver.close()
+                break
+            else:
+                print(min_mtp, "minutes until next race")
+                time.sleep(min_mtp * 30)
+        else:
+            time.sleep(3)
 
 
 
@@ -154,6 +166,17 @@ def find_active_tracks():
             active_tracks.append(track)
 
     return active_tracks
+
+def min_MTP(open_tracks):
+    # use 100 to signify None as no MTP can be greater than 99
+    min_mtp = 100
+    for track in open_tracks:
+        if open_tracks[track] != None:
+            min_mtp = min(open_tracks[track]['MTP'], min_mtp)
+
+    if min_mtp == 100:
+        min_mtp = None
+    return min_mtp
 
 def find_if_track_open(track, error = False, previous_open = None):
     open_track = None
