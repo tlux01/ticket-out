@@ -77,9 +77,10 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
     try:
-        driver.find_element_by_id('gep-programmessage')
-        print("Betting has closed")
-        return bet_list
+        text = driver.find_element_by_id('gep-programmessage').get_attribute("innerText")
+        if "closed" in text:
+            print("Betting has closed")
+            return bet_list
     except:
         pass
     try:
@@ -139,9 +140,10 @@ def cancel_bet(driver, bet_list, horse):
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
     try:
-        driver.find_element_by_id('gep-programmessage')
-        print("Betting has closed")
-        return bet_list
+        text = driver.find_element_by_id('gep-programmessage').get_attribute("innerText")
+        if "closed" in text:
+            print("Betting has closed")
+            return bet_list
     except:
         pass
     #to make sure bets load, three clicks to refresh page

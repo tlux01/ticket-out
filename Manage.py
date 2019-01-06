@@ -107,7 +107,6 @@ def monitor():
                             time.sleep(1)
                             track_bet_list = cancel_bet(driver, track_bet_list, horse)
                             bet_list[track][current_race] = track_bet_list
-        print(active_queue)
         for track in active_queue:
             print(track)
             current_race = active_queue[track]['Current Race']
@@ -122,9 +121,10 @@ def monitor():
                 break
             else:
                 print(min_mtp, "minutes until next bettable race")
-                time.sleep(min_mtp * 5)
+                time.sleep(5)
         else:
-            time.sleep(3)
+            print(active_queue)
+            time.sleep(2)
 
 
 
