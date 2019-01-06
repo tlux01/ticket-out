@@ -3,57 +3,6 @@ from WebDriver import *
 import time
 
 bet = 2
-def monitor(driver, track, bet_list):
-
-    driver.implicitly_wait(3)
-    NYRA_login(driver, "login.txt")
-    go_to_track(driver, track_list[track]["NYRA"])
-    track_stat = track_info(track)
-    current_race = int(track_stat["RaceNum"])
-    race_stat = track_open(driver)
-    if current_race == 1:
-        print("No bets on first race")
-        return
-    if race_stat != "OFF" and race_stat != "FIN":
-        print("Race", current_race, "at", track)
-        while (race_stat > 0):
-            race_stat = track_open(driver)
-            time.sleep(race_stat * 30)
-        while race_stat != "OFF" and race_stat != "FIN":
-            print(track_open(driver))
-            show_ev = comp_evs_show(track, current_race, bet)
-            for horse in show_ev.keys():
-                print(horse, end=" ")
-                if bet_or_cancel(show_ev[horse]):
-                    if horse not in bet_list.keys():
-                        go_to_race(driver, current_race, track_list[track]["NYRA"])
-                        time.sleep(1)
-                        bet_list = place_bet(driver, bet, horse, bet_list)
-                else:
-                    if horse in bet_list.keys():
-                        go_to_race(driver, current_race, track_list[track]["NYRA"])
-                        time.sleep(1)
-                        bet_list = cancel_bet(driver, bet_list, horse)
-            time.sleep(2)
-            race_stat = track_open(driver)
-            print(bet_list)
-    print("Race", current_race, "is", race_stat)
-    file_name = 'betlog.txt'
-    file_name = os.path.join(os.getcwd(), file_name)
-    betlog(bet_list, track, current_race, file_name)
-
-    answer = None
-    while answer not in ("y", "n"):
-        answer = input("Do you want to close? [y/n]: ")
-        if answer == "y":
-            driver.close()
-            return None
-        elif answer == "n":
-            print(driver)
-            return driver
-        else:
-            print("Please enter yes or no.")
-
 def betlog(bet_list, track, current_race, file_name):
     with open(file_name, 'a') as f:
         date = datetime.now()
@@ -65,7 +14,7 @@ def betlog(bet_list, track, current_race, file_name):
         else:
             f.write("No Bets\n")
 
-def monitor1():
+def monitor():
     driver = open_NYRA()
     NYRA_login(driver, 'login.txt')
     active_tracks = find_active_tracks()
