@@ -22,6 +22,9 @@ track_list = {
                                     'NYRA': 'Santa Anita'},
               # "Sunland Park" : {'BrisCode': "sun", 'TrackType': "Thoroughbred", 'AtabCode': 'SND',
               # not on NYRA                  'NYRA': 'Sunland Park'},
+
+              "Tampa Bay Downs" : {'BrisCode': 'tam', 'TrackType': "Thoroughbred", 'AtabCode': 'TAM',
+                                 'NYRA': 'Tampa Bay Downs'},
               "Turf Paradise" : {'BrisCode': 'tup', 'TrackType': "Thoroughbred", 'AtabCode': 'TUD',
                                  'NYRA': 'Turf Paradise'},
               "Turfway Park" : {'BrisCode': 'tp', 'TrackType': "Thoroughbred", 'AtabCode': 'TPD',

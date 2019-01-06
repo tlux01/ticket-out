@@ -77,6 +77,12 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
     try:
+        driver.find_element_by_id('gep-programmessage')
+        print("Betting has closed")
+        return bet_list
+    except:
+        pass
+    try:
         driver.find_element_by_xpath("//select[@class='gep-pools']/option[text()='SHW']").click()
     except NoSuchElementException:
         print("No show bets at this race")
@@ -84,7 +90,7 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     program = "//input[@programnumber = '" + str(program_number) + "']"
     # avoids stale error based on fast DOM load
     attempts = 0
-    while attempts < 10:
+    while attempts < 5:
         time.sleep(.5)
         attempts += 1
         try:
@@ -95,7 +101,15 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     if attempts == 10:
         print("Could not place bet on", program_number)
         return bet_list
-    driver.find_element_by_xpath("//input[@class='gep-inputcontrol-stake']").clear()
+    while attempts < 5:
+        time.sleep(.5)
+        attempts += 1
+        try:
+            # second expand all is what we want
+            driver.find_element_by_xpath("//input[@class='gep-inputcontrol-stake']").clear()
+            break
+        except Exception as e:
+            print(e)
     driver.find_element_by_xpath("//input[@class='gep-inputcontrol-stake']").send_keys(str(bet_amount))
     driver.find_element_by_xpath("//button[@class='gep-placeSelected gep-button gep-default']").click()
     div = driver.find_elements_by_xpath("//div[@class='ui-dialog-buttonset']")
@@ -109,7 +123,8 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     id = receipt.find_element_by_class_name("gep-value").get_attribute("innerHTML")
     # error checking for not recieving the right ticket id #
     if len(id) == 1:
-        raise ValueError
+        print("Could not place bet on", program_number)
+        return bet_list
 
     bet_list[program_number] = id
     print("--------------------------")
@@ -123,7 +138,12 @@ def cancel_bet(driver, bet_list, horse):
     bet_id = bet_list[horse]
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
-
+    try:
+        driver.find_element_by_id('gep-programmessage')
+        print("Betting has closed")
+        return bet_list
+    except:
+        pass
     #to make sure bets load, three clicks to refresh page
     driver.find_element_by_xpath("//a[@href='#gep-betHistory']").click()
     driver.find_element_by_xpath("//a[@href='#gep-betSlip']").click()
@@ -179,7 +199,16 @@ def cancel_bet(driver, bet_list, horse):
         print("--------------------------")
 
     #click close
-    driver.find_element_by_xpath("//button[@class='gep-close gep-button gep-default']").click()
+    attempts = 0
+    while attempts < 10:
+        time.sleep(.5)
+        attempts += 1
+        try:
+            # second expand all is what we want
+            driver.find_element_by_xpath("//button[@class='gep-close gep-button gep-default']").click()
+            break
+        except Exception as e:
+            print(e)
     return bet_list
 
 def track_open(driver):
@@ -203,3 +232,4 @@ def track_open(driver):
 
 # p = "ui-accordion-leftNavAccordian-header-3" #id
 #driver.find_element_by_id("ui-accordion-leftNavAccordian-header-3").click()
+# document.getElementById("gep-programmessage")

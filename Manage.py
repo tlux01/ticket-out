@@ -71,36 +71,57 @@ def monitor1():
     active_tracks = find_active_tracks()
     bet_list = {}
     open_tracks = {}
-    for track in active_tracks:
+    loop_num = 9
+    for track in active_tracks.keys():
         bet_list[track] = {}
         n = find_num_races(track)
         for i in range(2, n + 1):
             bet_list[track][i] = {}
     while True:
-        open_tracks_keys = list(open_tracks.keys())
-        for track in active_tracks:
-            if track in open_tracks_keys:
-                if open_tracks[track] == None:
-                    pass
+        loop_num += 1
+        if loop_num == 10:
+            loop_num = 0
+            open_tracks_keys = list(open_tracks.keys())
+            active_tracks_keys = list(active_tracks.keys())
+            for track in active_tracks_keys:
+                if track in open_tracks_keys:
+                    print(track, open_tracks[track])
+                    if open_tracks[track] is None:
+                        active_tracks.pop(track)
+                        open_tracks.pop(track)
+                    else:
+                        open_tracks[track] = find_if_track_open(track, open_tracks[track]['Error'],
+                                                                open_tracks[track])
                 else:
-                    open_tracks[track] = find_if_track_open(track, open_tracks[track]['Error'],
-                                                            open_tracks[track])
-            else:
-                open_tracks[track] = find_if_track_open(track)
+                    open_tracks[track] = find_if_track_open(track)
         active_queue = {}
+        open_tracks_keys = list(open_tracks.keys())
         for track in open_tracks_keys:
-            print(track, open_tracks[track])
-            if open_tracks[track] == None:
+            if open_tracks[track] is None:
                 if track in active_queue.keys():
                     active_queue.pop(track)
             elif open_tracks[track]['MTP'] in ['Off', 'Closed']:
                 if track in active_queue.keys():
+                    current_race = active_queue[track]['Current Race']
                     active_queue.pop(track)
+                    file_name = 'betlog.txt'
+                    file_name = os.path.join(os.getcwd(), file_name)
+                    betlog(bet_list[track][current_race], track,
+                           current_race, file_name)
             else:
                 if open_tracks[track]['MTP'] < 1 and open_tracks[track]['Current Race'] > 1:
                     active_queue[track] = open_tracks[track]
         active_queue_keys = list(active_queue.keys())
         for track in active_queue_keys:
+            if track in open_tracks_keys:
+                if open_tracks[track] == None:
+                    active_tracks.pop(track)
+                    open_tracks.pop(track)
+                else:
+                    open_tracks[track] = find_if_track_open(track, open_tracks[track]['Error'],
+                                                            open_tracks[track])
+            else:
+                open_tracks[track] = find_if_track_open(track)
             if active_queue[track]['Error']:
                 active_queue.pop(track)
                 pass
@@ -144,7 +165,6 @@ def monitor1():
             print(current_race, bet_list[track][current_race])
 
         # checks if active queue is empty
-        print(open_tracks)
         if not active_queue:
             min_mtp = min_MTP(open_tracks)
             if min_mtp == None:
@@ -152,18 +172,18 @@ def monitor1():
                 driver.close()
                 break
             else:
-                print(min_mtp, "minutes until next race")
-                time.sleep(min_mtp * 30)
+                print(min_mtp, "minutes until next bettable race")
+                time.sleep(min_mtp * 5)
         else:
             time.sleep(3)
 
 
 
 def find_active_tracks():
-    active_tracks = []
+    active_tracks = {}
     for track in track_list.keys():
         if find_num_races(track) > 0:
-            active_tracks.append(track)
+            active_tracks[track] = None
 
     return active_tracks
 
@@ -171,7 +191,15 @@ def min_MTP(open_tracks):
     # use 100 to signify None as no MTP can be greater than 99
     min_mtp = 100
     for track in open_tracks:
-        if open_tracks[track] != None:
+        if open_tracks[track] == None:
+            pass
+        elif open_tracks[track]['Current Race'] == 1:
+            min_mtp = min(50, min_mtp)
+        elif open_tracks[track]['Error']:
+            min_mtp = min(50, min_mtp)
+        elif open_tracks[track]['MTP'] in ['Off', 'Closed']:
+            min_mtp = min(50, min_mtp)
+        else:
             min_mtp = min(open_tracks[track]['MTP'], min_mtp)
 
     if min_mtp == 100:
