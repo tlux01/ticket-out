@@ -2,7 +2,7 @@ import itertools
 from Get import *
 
 
-def comp_evs_show(track, race_num, bet = 0):
+def comp_evs_show(track, race_num, bet = 0, bet_list = {}):
     """
     Retrieve expected value of each horse in certain race
     based on implied probability of win pool
@@ -45,7 +45,11 @@ def comp_evs_show(track, race_num, bet = 0):
     perm = perm_list(active_list, 3)
     perm = list(perm)
     for horse in runners.keys():
-        ex = compute_expected_show_payout(horse, runners, show_total, perm, "WinPct", bet)
+        # checks if we have already made a bet on this horse, if we did don't want to compute ev with additional bet factored in
+        if horse in bet_list.keys():
+            ex = compute_expected_show_payout(horse, runners, show_total, perm, "WinPct", 0)
+        else:
+            ex = compute_expected_show_payout(horse, runners, show_total, perm, "WinPct", bet)
         runners[horse]["Show Win EV"] = ex
 
     # will pays and double pool for current race are stored in previous race
@@ -59,7 +63,10 @@ def comp_evs_show(track, race_num, bet = 0):
             # multiply by 100 as DD Implied is in decimal form
             runners[horse]["DD Implied"] = will_pays[horse]["DD Implied"] * 100
     for horse in runners.keys():
-        ex = compute_expected_show_payout(horse, runners, show_total, perm, "DD Implied", bet)
+        if horse in bet_list.keys():
+            ex = compute_expected_show_payout(horse, runners, show_total, perm, "DD Implied", 0)
+        else:
+            ex = compute_expected_show_payout(horse, runners, show_total, perm, "DD Implied", bet)
         runners[horse]["Show DD EV"] = ex
     print(runners)
     return runners

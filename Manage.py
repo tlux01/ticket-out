@@ -14,18 +14,34 @@ def betlog(bet_list, track, current_race, file_name):
         else:
             f.write("No Bets\n")
 
-def monitor():
-    driver = open_NYRA()
-    NYRA_login(driver, 'login.txt')
-    active_tracks = find_active_tracks()
+def monitor_wrapper():
     bet_list = {}
-    open_tracks = {}
-    loop_num = 9
+    active_tracks = find_active_tracks()
     for track in active_tracks.keys():
         bet_list[track] = {}
         n = find_num_races(track)
         for i in range(2, n + 1):
             bet_list[track][i] = {}
+    r = True
+    while True:
+        driver = open_NYRA()
+        NYRA_login(driver, 'login.txt')
+        try:
+            monitor(bet_list, active_tracks, driver)
+        except Exception as e:
+            print(e)
+            driver.close()
+            r = False
+        if r:
+            break
+        else:
+            r = True
+
+def monitor(bet_list, active_tracks, driver):
+    open_tracks = {}
+    active_queue = {}
+    loop_num = 9
+
     while True:
         loop_num += 1
         if loop_num == 10:
@@ -43,7 +59,6 @@ def monitor():
                                                                 open_tracks[track])
                 else:
                     open_tracks[track] = find_if_track_open(track)
-        active_queue = {}
         open_tracks_keys = list(open_tracks.keys())
         for track in open_tracks_keys:
             if open_tracks[track] is None:
@@ -55,6 +70,7 @@ def monitor():
                     active_queue.pop(track)
                     file_name = 'betlog.txt'
                     file_name = os.path.join(os.getcwd(), file_name)
+                    print(file_name, current_race)
                     betlog(bet_list[track][current_race], track,
                            current_race, file_name)
             else:
@@ -77,7 +93,7 @@ def monitor():
             else:
                 current_race = active_queue[track]['Current Race']
                 try:
-                    show_ev = comp_evs_show(track, current_race, bet)
+                    show_ev = comp_evs_show(track, current_race, bet, bet_list[track][current_race])
                 except Exception as e:
                     print(type(e).__name__)
                     print(e)
@@ -118,10 +134,10 @@ def monitor():
             if min_mtp == None:
                 print("No more tracks today")
                 driver.close()
-                break
+                return False
             else:
                 print(min_mtp, "minutes until next bettable race")
-                time.sleep(5)
+                time.sleep(min_mtp)
         else:
             print(active_queue)
             time.sleep(2)
@@ -143,11 +159,11 @@ def min_MTP(open_tracks):
         if open_tracks[track] == None:
             pass
         elif open_tracks[track]['Current Race'] == 1:
-            min_mtp = min(50, min_mtp)
+            min_mtp = min(25, min_mtp)
         elif open_tracks[track]['Error']:
-            min_mtp = min(50, min_mtp)
+            min_mtp = min(25, min_mtp)
         elif open_tracks[track]['MTP'] in ['Off', 'Closed']:
-            min_mtp = min(50, min_mtp)
+            min_mtp = min(25, min_mtp)
         else:
             min_mtp = min(open_tracks[track]['MTP'], min_mtp)
 

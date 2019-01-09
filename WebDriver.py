@@ -112,6 +112,13 @@ def place_bet(driver, bet_amount, program_number, bet_list):
         except Exception as e:
             print(e)
     driver.find_element_by_xpath("//input[@class='gep-inputcontrol-stake']").send_keys(str(bet_amount))
+    try:
+        text = driver.find_element_by_id('gep-programmessage').get_attribute("innerText")
+        if "closed" in text:
+            print("Betting has closed")
+            return bet_list
+    except:
+        pass
     driver.find_element_by_xpath("//button[@class='gep-placeSelected gep-button gep-default']").click()
     div = driver.find_elements_by_xpath("//div[@class='ui-dialog-buttonset']")
     buttons = div[1].find_elements_by_tag_name("button")
@@ -235,3 +242,6 @@ def track_open(driver):
 # p = "ui-accordion-leftNavAccordian-header-3" #id
 #driver.find_element_by_id("ui-accordion-leftNavAccordian-header-3").click()
 # document.getElementById("gep-programmessage")
+# add the closed check for bet when clicking submit
+# try except loop wrapper for monitor
+# add change in expected value
