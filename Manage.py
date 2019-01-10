@@ -136,7 +136,8 @@ def monitor(bet_list, active_tracks, driver):
                 driver.close()
                 return False
             else:
-                print(min_mtp, "minutes until next bettable race")
+                if loop_num == 5:
+                    print(min_mtp, "minutes until next bettable race")
                 time.sleep(min_mtp)
         else:
             print(active_queue)
