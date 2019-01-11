@@ -3,6 +3,8 @@ from WebDriver import *
 import time
 
 bet = 2
+
+
 def betlog(bet_list, track, current_race, file_name):
     with open(file_name, 'a') as f:
         date = datetime.now()
@@ -13,6 +15,7 @@ def betlog(bet_list, track, current_race, file_name):
                         ' Ticket #: ' + str(bet_list[horse]) + '\n')
         else:
             f.write("No Bets\n")
+
 
 def monitor_wrapper():
     bet_list = {}
@@ -36,6 +39,7 @@ def monitor_wrapper():
             break
         else:
             r = True
+
 
 def monitor(bet_list, active_tracks, driver):
     open_tracks = {}
@@ -79,7 +83,7 @@ def monitor(bet_list, active_tracks, driver):
         active_queue_keys = list(active_queue.keys())
         for track in active_queue_keys:
             if track in open_tracks_keys:
-                if open_tracks[track] == None:
+                if open_tracks[track] is None:
                     active_tracks.pop(track)
                     open_tracks.pop(track)
                 else:
@@ -141,7 +145,7 @@ def monitor(bet_list, active_tracks, driver):
                 time.sleep(min_mtp)
         else:
             print(active_queue)
-            time.sleep(2)
+
 
 
 
@@ -177,7 +181,10 @@ def find_if_track_open(track, error = False, previous_open = None):
     track_stat = track_info(track)
     if error:
         current_race = int(track_stat["RaceNum"])
-        if previous_open['Current Race'] == current_race:
+        num = find_num_races(track)
+        if current_race == num:
+            return None
+        elif previous_open['Current Race'] == current_race:
             return previous_open
         else:
             if track_stat['Status'] == 'Open':
@@ -199,14 +206,15 @@ def find_if_track_open(track, error = False, previous_open = None):
             race_stat = collect_race_status(track, current_race)
             if track_stat['RaceStatus'] == 'Off':
                 open_track = {'MTP': 'Off', 'Current Race': current_race,
-                                     'Error': False}
+                              'Error': False}
             elif track_stat['RaceStatus'] == 'Closed':
                 open_track = {'MTP': 'Off', 'Current Race': current_race,
-                                     'Error': False}
+                              'Error': False}
             else:
-                open_track = {'MTP': race_stat['mtp'],
-                                      'Current Race': current_race,
-                                      'Error': False}
+                open_track = {'MTP': race_stat['mtp'], 'Current Race': current_race,
+                              'Error': False}
 
     return open_track
+
+
 

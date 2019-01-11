@@ -12,7 +12,7 @@ def track_data_collector(track, start_from = 1):
     :return:
     """
 
-    file_name = 'Data/' + track + ' Races.csv'
+    file_name = 'Data/Master.csv'
     file_name = os.path.join(os.getcwd(), file_name)
     # writes new file if file not in our Data folder
     if not os.path.isfile(file_name):
@@ -47,10 +47,6 @@ def track_data_collector(track, start_from = 1):
 
 
 
-
-
-
-
 def write_to_csv(track, race_num):
     """
     appends track data onto csv
@@ -74,9 +70,8 @@ def write_to_csv(track, race_num):
         first_race = True
 
 
-
-    ev_show = comp_evs_show(track, race_num)
-    ev_place = comp_evs_place(track, race_num)
+    ev_show = comp_evs_show(track, race_num, 10)
+    ev_place = comp_evs_place(track, race_num, 10)
     # below is the building of the 2-d list that will represent the rows
     # and columns in our csv
     content = []
