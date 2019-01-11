@@ -2,7 +2,9 @@ import requests
 from datetime import datetime
 from ID import get_url, track_list
 
-
+headers = {
+     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
+}
 
 def change_dictionary(runners):
     """
@@ -27,7 +29,7 @@ def find_num_races(track):
     :return: number of races
     """
     schedule_url = get_url(track)['Races']
-    schedule = requests.get(schedule_url)
+    schedule = requests.get(schedule_url, headers= headers)
     data = schedule.json()
     try:
         num = len(data)
@@ -44,7 +46,7 @@ def collect_WPS(track, race_num):
     :return:
     """
     data_url = get_url(track, race_num)['WPS']
-    data = requests.get(data_url)
+    data = requests.get(data_url, headers= headers)
     WPS = data.json()
     entries = WPS['WPSPools']['Entries']
     totals = {}
@@ -65,7 +67,7 @@ def track_info(track):
     :return: dict
     """
     track_url = get_url(track)['Track']
-    tracks = requests.get(track_url)
+    tracks = requests.get(track_url, headers= headers)
     data = tracks.json()
     data = data['CurrentRace']
     for race in data:
@@ -88,7 +90,7 @@ def to_datetime(time):
 
 def collect_race_status(track, race_num):
     schedule_url = get_url(track)['Races']
-    schedule = requests.get(schedule_url)
+    schedule = requests.get(schedule_url, headers= headers)
     data = schedule.json()
     for race in data:
         if int(race['race']) == race_num:
@@ -103,7 +105,7 @@ def collect_results(track, race_num):
     :return:
     """
     result_url = get_url(track, race_num)['Results']
-    results = requests.get(result_url)
+    results = requests.get(result_url, headers= headers)
     data = results.json()
     WPS = data['Results']['WPS']['Entries']
     results = {}
@@ -135,7 +137,7 @@ def collect_exotic_pools(track, race_num):
     :return:
     """
     exotic_url = get_url(track, race_num)['Pools']
-    exotics = requests.get(exotic_url)
+    exotics = requests.get(exotic_url, headers= headers)
     data = exotics.json()
     pool_totals = {}
     for pool in data['PoolTotals']:
@@ -159,7 +161,7 @@ def collect_will_pays(track, race_num):
     :return: dictionary indexed by horse number with will pays information
     """
     will_pay_url = get_url(track, race_num)['Will Pays']
-    will_pay = requests.get(will_pay_url)
+    will_pay = requests.get(will_pay_url, headers= headers)
     data = will_pay.json()
     will_pays = {}
     pools = data['WillPays']['Pools']

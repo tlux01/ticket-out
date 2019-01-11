@@ -15,7 +15,7 @@ def comp_evs_show(track, race_num, bet = 0, bet_list = {}):
     """
     win_show_url = get_url(track, race_num)['WPS']
 
-    r_win_show = requests.get(win_show_url)
+    r_win_show = requests.get(win_show_url, headers=headers)
 
     data = r_win_show.json()
 
@@ -29,7 +29,7 @@ def comp_evs_show(track, race_num, bet = 0, bet_list = {}):
     print(show_total)
     # entries is dictionary of horses in race
     entries = data['WPSPools']['Entries']
-    runners = [] # includes all horses
+    runners = []  # includes all horses
     active_list = []  # doesn't include scratches
     for horse in entries:
         if horse['Win'] != '-2':  # -2 indicates scratch
@@ -64,6 +64,7 @@ def comp_evs_show(track, race_num, bet = 0, bet_list = {}):
             runners[horse]["DD Implied"] = will_pays[horse]["DD Implied"] * 100
     for horse in runners.keys():
         if horse in bet_list.keys():
+            print("hey")
             ex = compute_expected_show_payout(horse, runners, show_total, perm, "DD Implied", 0)
         else:
             ex = compute_expected_show_payout(horse, runners, show_total, perm, "DD Implied", bet)
@@ -74,7 +75,7 @@ def comp_evs_show(track, race_num, bet = 0, bet_list = {}):
 def comp_evs_place(track, race_num, bet = 0):
     win_show_url = get_url(track, race_num)['WPS']
 
-    r_win_show = requests.get(win_show_url)
+    r_win_show = requests.get(win_show_url, headers = headers)
 
     data = r_win_show.json()
 
@@ -261,9 +262,7 @@ def bet_or_cancel(horse_evs, threshold = 1.1):
     win = horse_evs["Show Win EV"]
     dd = horse_evs["Show DD EV"]
     print((win + dd) / 2)
-    if win > 1 and dd > 1:
-        avg = (win + dd) / 2
-        if avg > threshold:
-            return True
+    if win > 1.05 and dd > 1.1:
+        return True
 
     return False
