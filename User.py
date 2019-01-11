@@ -6,5 +6,5 @@ if __name__ == '__main__':
     for track in track_list.keys():
         try:
             track_data_collector(track)
-        except:
-            pass
+        except Exception as e:
+            print(e)

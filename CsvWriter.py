@@ -132,7 +132,7 @@ def write_to_csv(track, race_num):
 
         content.append(row)
 
-    file_name = 'Data/' + track + ' Races.csv'
+    file_name = 'Data/Master.csv'
     file_name = os.path.join(os.getcwd(), file_name)
 
     with open(file_name, 'a', newline='') as f:
@@ -153,7 +153,7 @@ def write_header(track):
               'Result', 'Win Payout', 'Place Payout', 'Show Payout',
               'Show DD EV', 'Show Win EV', 'Place DD EV', 'Place Win EV']
 
-    file_name = 'Data/' + track + ' Races.csv'
+    file_name = 'Data/Master.csv'
     file_name = os.path.join(os.getcwd(), file_name)
     with open(file_name, 'w', newline='') as f:
         writer = csv.writer(f)
