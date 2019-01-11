@@ -3,8 +3,12 @@
 track_list = {
               "Aqueduct": {'BrisCode': "aqu", "TrackType": "Thoroughbred", 'AtabCode': 'AQD',
                            'NYRA': 'Aqueduct'},
+              "Charles Town": {'BrisCode': 'ct', 'TrackType': 'Thoroughbred', 'AtabCode': 'TWN',
+                               'NYRA': 'Charles Town'},
               # "Churchill Downs": {'BrisCode': "CD", "TrackType": "Thoroughbred", 'AtabCode': None},
               # "Del Mar": {'BrisCode': "DMR", "TrackType": "Thoroughbred", 'AtabCode': None},
+              "Delta Downs": {'BrisCode': 'ded', 'TrackType': 'Thoroughbred', 'AtabCode': 'DTN',
+                               'NYRA': 'Delta Downs'},
               "Fair Grounds": {'BrisCode': 'fg', 'TrackType': 'Thoroughbred', 'AtabCode': 'JGD',
                                'NYRA': 'Fair Grounds'},
               "Golden Gate Fields" : {'BrisCode': "gg", 'TrackType': "Thoroughbred", 'AtabCode': 'GGD',
