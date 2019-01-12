@@ -64,12 +64,10 @@ def comp_evs_show(track, race_num, bet = 0, bet_list = {}):
             runners[horse]["DD Implied"] = will_pays[horse]["DD Implied"] * 100
     for horse in runners.keys():
         if horse in bet_list.keys():
-            print("hey")
             ex = compute_expected_show_payout(horse, runners, show_total, perm, "DD Implied", 0)
         else:
             ex = compute_expected_show_payout(horse, runners, show_total, perm, "DD Implied", bet)
         runners[horse]["Show DD EV"] = ex
-    print(runners)
     return runners
 
 def comp_evs_place(track, race_num, bet = 0):
