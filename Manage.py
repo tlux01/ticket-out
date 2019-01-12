@@ -113,7 +113,6 @@ def monitor(bet_list, active_tracks, driver):
                     print(horse, end=" ")
                     if bet_or_cancel(show_ev[horse]):
                         if horse not in bet_list[track][current_race].keys():
-                            print(current_race, track_list[track]["NYRA"])
                             go_to_race(driver, current_race, track_list[track]["NYRA"])
                             track_bet_list = bet_list[track][current_race]
                             time.sleep(1)
@@ -121,7 +120,6 @@ def monitor(bet_list, active_tracks, driver):
                             bet_list[track][current_race] = track_bet_list
                     else:
                         if horse in bet_list[track][current_race].keys():
-                            print(current_race, track_list[track]["NYRA"])
                             go_to_race(driver, current_race, track_list[track]["NYRA"])
                             track_bet_list = bet_list[track][current_race]
                             time.sleep(1)
@@ -144,6 +142,7 @@ def monitor(bet_list, active_tracks, driver):
                     print(min_mtp, "minutes until next bettable race")
                 time.sleep(min_mtp)
         else:
+            time.sleep(.5)
             print(active_queue)
 
 
