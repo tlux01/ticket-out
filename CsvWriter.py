@@ -23,7 +23,8 @@ def track_data_collector(track, start_from = 1):
     if num_races == 0:
         print(track, "had no races today")
     else:
-        race = track_info(track)
+        info = get_all_info()
+        race = get_track_info(track, info)
         first_post_time = race['FirstPostTime']
         status = race['Status']
         collect = False
@@ -39,7 +40,8 @@ def track_data_collector(track, start_from = 1):
                 collect = True
             else:
                 print(track, " has not closed yet")
-                race = track_info(track)
+                info = get_all_info()
+                race = get_track_info(track, info)
                 status = race['Status']
                 # if too early waits 5 minutes before checking again
                 time.sleep(300)
@@ -75,10 +77,12 @@ def write_to_csv(track, race_num):
     # below is the building of the 2-d list that will represent the rows
     # and columns in our csv
     content = []
+    info = get_all_info()
     for horse_num in WPS.keys():
         figs = WPS[horse_num]
         row = []
-        date = str(track_info(track)['FirstPostTime'].date())
+        track_info = get_track_info(track, info)
+        date = str(track_info['FirstPostTime'].date())
         row.append(date), row.append(track)
         row.append(race_num), row.append(horse_num)
         if figs != 'Scratch':

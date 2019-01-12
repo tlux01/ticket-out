@@ -47,6 +47,7 @@ def monitor(bet_list, active_tracks, driver):
     loop_num = 9
 
     while True:
+        info = get_all_info()
         loop_num += 1
         if loop_num == 10:
             loop_num = 0
@@ -59,10 +60,10 @@ def monitor(bet_list, active_tracks, driver):
                         active_tracks.pop(track)
                         open_tracks.pop(track)
                     else:
-                        open_tracks[track] = find_if_track_open(track, open_tracks[track]['Error'],
+                        open_tracks[track] = find_if_track_open(track, info, open_tracks[track]['Error'],
                                                                 open_tracks[track])
                 else:
-                    open_tracks[track] = find_if_track_open(track)
+                    open_tracks[track] = find_if_track_open(track, info)
         open_tracks_keys = list(open_tracks.keys())
         for track in open_tracks_keys:
             if open_tracks[track] is None:
@@ -87,10 +88,10 @@ def monitor(bet_list, active_tracks, driver):
                     active_tracks.pop(track)
                     open_tracks.pop(track)
                 else:
-                    open_tracks[track] = find_if_track_open(track, open_tracks[track]['Error'],
+                    open_tracks[track] = find_if_track_open(track, info, open_tracks[track]['Error'],
                                                             open_tracks[track])
             else:
-                open_tracks[track] = find_if_track_open(track)
+                open_tracks[track] = find_if_track_open(track, info)
             if active_queue[track]['Error']:
                 active_queue.pop(track)
                 pass
@@ -133,16 +134,16 @@ def monitor(bet_list, active_tracks, driver):
         # checks if active queue is empty
         if not active_queue:
             min_mtp = min_MTP(open_tracks)
-            if min_mtp == None:
+            if min_mtp is None:
                 print("No more tracks today")
                 driver.close()
                 return False
             else:
-                if loop_num == 5:
+                if loop_num != 5:
                     print(min_mtp, "minutes until next bettable race")
-                time.sleep(min_mtp)
+                time.sleep(min_mtp * 2)
         else:
-            time.sleep(.5)
+            time.sleep(1)
             print(active_queue)
 
 
@@ -175,9 +176,9 @@ def min_MTP(open_tracks):
         min_mtp = None
     return min_mtp
 
-def find_if_track_open(track, error = False, previous_open = None):
+def find_if_track_open(track, info, error = False, previous_open = None):
     open_track = None
-    track_stat = track_info(track)
+    track_stat = get_track_info(track, info)
     if error:
         current_race = int(track_stat["RaceNum"])
         num = find_num_races(track)

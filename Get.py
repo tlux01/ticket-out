@@ -60,22 +60,28 @@ def collect_WPS(track, race_num):
             totals[num] = "Scratch"
     return totals
 
-def track_info(track):
+def get_all_info():
     """
-    returns tracks first start time and if it is open
+    returns info of all tracks
     :param track:
     :return: dict
     """
-    track_url = get_url(track)['Track']
+    # track url doesnt change with different track
+    track_url = get_url("Aqueduct")['Track']
     tracks = requests.get(track_url, headers= headers)
     data = tracks.json()
     data = data['CurrentRace']
+    return data
+
+
+
+def get_track_info(track, data):
     for race in data:
+        race_copy = {**race}
         if race["BrisCode"] == track_list[track]["BrisCode"]:
             time = race["FirstPostTime"]
-            race["FirstPostTime"] = to_datetime(time)
-
-            return race
+            race_copy["FirstPostTime"] = to_datetime(time)
+            return race_copy
 
 def to_datetime(time):
     if "-05:00" in time:
