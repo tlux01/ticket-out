@@ -141,7 +141,10 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     try:
         text = driver.find_element_by_xpath("//div[@class='gep-message gep-bet-error']").get_attribute("innerText")
         if "not open" in text:
-            driver.find_element_by_xpath("//button[@class='gep-cancelAll gep-button']").click()
+            try:
+                driver.find_element_by_xpath("//button[@class='gep-cancelAll gep-button']").click()
+            except:
+                driver.find_element_by_xpath("//button[@class='gep-closeReceipt gep-button gep-default']").click()
             print("Betting has just closed")
             return bet_list
     except:
@@ -166,6 +169,10 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     print("--------------------------")
     print("Bet on horse", program_number)
     print("--------------------------")
+    try:
+        driver.find_element_by_xpath("//button[@class='gep-closeReceipt gep-button gep-default']").click()
+    except:
+        print("Could not close")
     return bet_list
     # time.sleep(9)
     # driver.close()
