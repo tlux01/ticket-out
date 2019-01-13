@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime
-from ID import get_url, track_list
+from ID import get_url, track_list, tracks_to_bet
 
 headers = {
      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
