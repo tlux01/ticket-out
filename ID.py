@@ -34,10 +34,12 @@ track_list = {
               "Tampa Bay Downs" : {'BrisCode': 'tam', 'TrackType': "Thoroughbred", 'AtabCode': 'TAM',
                                  'NYRA': 'Tampa Bay Downs'},
               "Turf Paradise" : {'BrisCode': 'tup', 'TrackType': "Thoroughbred", 'AtabCode': 'TUD',
-                                 'NYRA': 'Turf Paradise'},
+                                'NYRA': 'Turf Paradise'},
               "Turfway Park" : {'BrisCode': 'tp', 'TrackType': "Thoroughbred", 'AtabCode': 'TPD',
                                  'NYRA': 'Turfway Park'}
              }
+
+tracks_to_bet = ["Parx Racing", "Gulfstream Park", "Laurel Park", "Fair Grounds"]
 
 def get_url(track, race_num = '1'):
     urls = {}

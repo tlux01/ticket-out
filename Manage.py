@@ -139,9 +139,9 @@ def monitor(bet_list, active_tracks, driver):
                 driver.close()
                 return False
             else:
-                if loop_num != 5:
+                if loop_num == 5:
                     print(min_mtp, "minutes until next bettable race")
-                time.sleep(min_mtp * 2)
+                time.sleep(2)
         else:
             time.sleep(1)
             print(active_queue)
@@ -151,7 +151,7 @@ def monitor(bet_list, active_tracks, driver):
 
 def find_active_tracks():
     active_tracks = {}
-    for track in track_list.keys():
+    for track in tracks_to_bet:
         if find_num_races(track) > 0:
             active_tracks[track] = None
 

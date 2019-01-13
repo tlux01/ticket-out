@@ -106,7 +106,7 @@ def place_bet(driver, bet_amount, program_number, bet_list):
 
     # avoids stale error based on improper DOM load
     attempts = 0
-    while attempts < 5:
+    while attempts < 10:
         time.sleep(.5)
         attempts += 1
         try:
@@ -114,11 +114,11 @@ def place_bet(driver, bet_amount, program_number, bet_list):
             break
         except Exception as e:
             print(e)
-    if attempts == 5:
+    if attempts == 10:
         print("Could not place bet on", program_number)
         return bet_list
 
-    while attempts < 5:
+    while attempts < 10:
         time.sleep(.5)
         attempts += 1
         try:
@@ -126,7 +126,10 @@ def place_bet(driver, bet_amount, program_number, bet_list):
             driver.find_element_by_xpath("//input[@class='gep-inputcontrol-stake']").clear()
             break
         except Exception as e:
-            print(e)
+            try:
+                driver.find_element_by_xpath("//button[@class='gep-cancelAll gep-button']").click()
+            except:
+                print(e)
 
     driver.find_element_by_xpath("//input[@class='gep-inputcontrol-stake']").send_keys(str(bet_amount))
     try:
