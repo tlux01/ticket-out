@@ -260,7 +260,7 @@ def bet_or_cancel(horse_evs, threshold = 1.1):
     win = horse_evs["Show Win EV"]
     dd = horse_evs["Show DD EV"]
     print((win + dd) / 2)
-    if win > 1.05 and dd > 1.1:
+    if win > 1.1 and dd > 1.1:
         return True
 
     return False
