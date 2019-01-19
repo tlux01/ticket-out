@@ -7,6 +7,7 @@ import os
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions as EC
 
+
 def open_NYRA():
     """
     opens chrome webdriver and goes to NYRA bets
@@ -21,6 +22,7 @@ def open_NYRA():
     driver.get("https://www.nyrabets.com/#wagering")
     return driver
 
+
 def NYRA_login(driver, file_name):
     """
     Logs into NYRA site based on info in file name
@@ -31,7 +33,7 @@ def NYRA_login(driver, file_name):
     driver.switch_to.default_content()
     driver.switch_to.frame("loginFrame")
     with open(file_name) as f:
-        usr_name = f.readline().strip("\n") # removes new line character
+        usr_name = f.readline().strip("\n")  # removes new line character
         pss_wrd = f.readline().strip("\n")
     f.close()
     driver.find_element_by_name('username').send_keys(usr_name)
@@ -54,8 +56,10 @@ def go_to_track(driver, track):
         driver.find_element_by_link_text(track).click()  # go to track link
     except:
         # click today's racing dropdown
-        driver.find_element_by_id("ui-accordion-leftNavAccordian-header-3").click()
+        driver.find_element_by_id(
+            "ui-accordion-leftNavAccordian-header-3").click()
         driver.find_element_by_link_text(track).click()  # go to track link
+
 
 def go_to_race(driver, race_num, track):
     """
@@ -74,12 +78,12 @@ def go_to_race(driver, race_num, track):
     driver.switch_to.frame("gepIframe")
     driver.find_element_by_partial_link_text("Race " + str(race_num)).click()
 
+
 def place_bet(driver, bet_amount, program_number, bet_list):
     """
     places bet on track on horse corresponding to program number,
     uses selenium so it requires a chrome driver
     :param driver:
-    :param track_name:
     :param bet_amount:
     :param program_number:
     :return:
@@ -89,14 +93,21 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     driver.switch_to.frame("gepIframe")
 
     try:
-        text = driver.find_element_by_id('gep-programmessage').get_attribute("innerText")
+        text = driver.find_element_by_id(
+            'gep-programmessage').get_attribute("innerText")
         if "closed" in text:
             print("Betting has closed")
             return bet_list
     except:
         pass
     try:
-        driver.find_element_by_xpath("//select[@class='gep-pools']/option[text()='SHW']").click()
+        driver.find_element_by_xpath(
+            "//button[@class='gep-cancelAll gep-button']").click()
+    except:
+        pass
+    try:
+        driver.find_element_by_xpath(
+            "//select[@class='gep-pools']/option[text()='SHW']").click()
     except NoSuchElementException:
         print("No show bets at this race")
         return bet_list
@@ -123,37 +134,26 @@ def place_bet(driver, bet_amount, program_number, bet_list):
         attempts += 1
         try:
             # second expand all is what we want
-            driver.find_element_by_xpath("//input[@class='gep-inputcontrol-stake']").clear()
+            driver.find_element_by_xpath(
+                "//input[@class='gep-inputcontrol-stake']").clear()
             break
         except Exception as e:
-            try:
-                driver.find_element_by_xpath("//button[@class='gep-cancelAll gep-button']").click()
-            except:
-                print(e)
+            print(e)
 
-    driver.find_element_by_xpath("//input[@class='gep-inputcontrol-stake']").send_keys(str(bet_amount))
+    driver.find_element_by_xpath(
+        "//input[@class='gep-inputcontrol-stake']").send_keys(str(bet_amount))
     try:
         # checks if program message is shown saying betting has closed
-        text = driver.find_element_by_id('gep-programmessage').get_attribute("innerText")
+        text = driver.find_element_by_id(
+            'gep-programmessage').get_attribute("innerText")
         if "closed" in text:
             print("Betting has closed")
             return bet_list
     except:
         pass
 
-    try:
-        text = driver.find_element_by_xpath("//div[@class='gep-message gep-bet-error']").get_attribute("innerText")
-        if "not open" in text:
-            try:
-                driver.find_element_by_xpath("//button[@class='gep-cancelAll gep-button']").click()
-            except:
-                driver.find_element_by_xpath("//button[@class='gep-closeReceipt gep-button gep-default']").click()
-            print("Betting has just closed")
-            return bet_list
-    except:
-        pass
-
-    driver.find_element_by_xpath("//button[@class='gep-placeSelected gep-button gep-default']").click()
+    driver.find_element_by_xpath(
+        "//button[@class='gep-placeSelected gep-button gep-default']").click()
     div = driver.find_elements_by_xpath("//div[@class='ui-dialog-buttonset']")
     buttons = div[1].find_elements_by_tag_name("button")
 
@@ -162,9 +162,11 @@ def place_bet(driver, bet_amount, program_number, bet_list):
             button.click()
     time.sleep(1)
     receipt = driver.find_element_by_xpath("//div[@class='gep-receiptLine']")
-    id = receipt.find_element_by_class_name("gep-value").get_attribute("innerHTML")
+    id = receipt.find_element_by_class_name(
+        "gep-value").get_attribute("innerHTML")
+
     # error checking for not recieving the right ticket id #
-    if len(id) == 1:
+    if len(id) < 3:
         print("Could not place bet on", program_number)
         return bet_list
 
@@ -172,13 +174,16 @@ def place_bet(driver, bet_amount, program_number, bet_list):
     print("--------------------------")
     print("Bet on horse", program_number)
     print("--------------------------")
+
     try:
-        driver.find_element_by_xpath("//button[@class='gep-closeReceipt gep-button gep-default']").click()
+        driver.find_element_by_xpath(
+            "//button[@class='gep-closeReceipt gep-button gep-default']").click()
     except:
         print("Could not close")
     return bet_list
     # time.sleep(9)
     # driver.close()
+
 
 def cancel_bet(driver, bet_list, horse):
     bet_id = bet_list[horse]
@@ -186,13 +191,14 @@ def cancel_bet(driver, bet_list, horse):
     driver.switch_to.default_content()
     driver.switch_to.frame("gepIframe")
     try:
-        text = driver.find_element_by_id('gep-programmessage').get_attribute("innerText")
+        text = driver.find_element_by_id(
+            'gep-programmessage').get_attribute("innerText")
         if "closed" in text:
             print("Betting has closed")
             return bet_list
     except:
         pass
-    #to make sure bets load, three clicks to refresh page
+    # to make sure bets load, three clicks to refresh page
     driver.find_element_by_xpath("//a[@href='#gep-betHistory']").click()
     driver.find_element_by_xpath("//a[@href='#gep-betSlip']").click()
     driver.find_element_by_xpath("//a[@href='#gep-betHistory']").click()
@@ -206,27 +212,39 @@ def cancel_bet(driver, bet_list, horse):
         attempts += 1
         try:
             # second expand all is what we want
-            driver.find_elements_by_xpath("//a[@class='gep-expandAll']")[1].click()
+            driver.find_elements_by_xpath(
+                "//a[@class='gep-expandAll']")[1].click()
             break
         except Exception as e:
             print(e)
-
+    if attempts == 10:
+        print("Could not cancel bet")
+        return bet_list
+    canceled = False
     my_bets = driver.find_element_by_class_name("gep-list")
-    my_bets = my_bets.find_elements_by_xpath("//div[@class='gep-bet gep-status-none  gep-betCategory5']")
+    my_bets = my_bets.find_elements_by_xpath(
+        "//div[@class='gep-bet gep-status-none  gep-betCategory5']")
     # list is the list of bets (either canceled or active) that is seen in the my bets dropdown
     for item in my_bets:
         info = item.find_element_by_class_name("gep-extraInfo")
         info = info.find_elements_by_class_name("gep-receiptLine")
         button = item.find_element_by_class_name("gep-betSelectorBox")
         for line in info:
-            ticket_line = line.find_element_by_class_name("gep-attrib").get_attribute("innerHTML")
+            ticket_line = line.find_element_by_class_name(
+                "gep-attrib").get_attribute("innerHTML")
             if ticket_line == "Ticket #:":
-                ticket_num = line.find_element_by_class_name("gep-value").get_attribute("innerHTML")
+                ticket_num = line.find_element_by_class_name(
+                    "gep-value").get_attribute("innerHTML")
                 if ticket_num == bet_id:
                     button.click()
+                    canceled = True
+    if not canceled:
+        print('Could not cancel bet')
+        return bet_list
 
-    #cancel bet
-    driver.find_element_by_xpath("//button[@class='gep-cancel gep-button gep-default']").click()
+    # cancel bet
+    driver.find_element_by_xpath(
+        "//button[@class='gep-cancel gep-button gep-default']").click()
     ui_buttons = driver.find_elements_by_xpath("//button[@class='ui-button ui-widget ui-state-default"
                                                " ui-corner-all ui-button-text-only']")
     for ui_button in ui_buttons:
@@ -238,24 +256,28 @@ def cancel_bet(driver, bet_list, horse):
         # gep-error will show if we cannot get bet up in time
         driver.find_element_by_xpath("//span[@class='gep-error']")
         print("Could not cancel bet on", bet_id)
+        return bet_list
     except:
-        bet_list.pop(horse)
-        print("--------------------------")
-        print("Canceled bet on horse", horse)
-        print("--------------------------")
+        pass
 
-    #click close
+    # click close
     attempts = 0
     while attempts < 10:
         time.sleep(.5)
         attempts += 1
         try:
-            # second expand all is what we want
-            driver.find_element_by_xpath("//button[@class='gep-close gep-button gep-default']").click()
+            driver.find_element_by_xpath(
+                "//button[@class='gep-close gep-button gep-default']").click()
             break
         except Exception as e:
             print(e)
+
+    bet_list.pop(horse)
+    print("--------------------------")
+    print("Canceled bet on horse", horse)
+    print("--------------------------")
     return bet_list
+
 
 def track_open(driver):
     """
@@ -266,7 +288,7 @@ def track_open(driver):
     header = driver.find_element_by_class_name("gep-raceDetails")
     span = header.find_elements_by_tag_name("span")
     innerHTML = span[0].get_attribute("innerHTML")
-    info = innerHTML.split() # because inner HTML can be of form "22 MTP"
+    info = innerHTML.split()  # because inner HTML can be of form "22 MTP"
     MTP = info[0]
     if MTP == 'OFF':
         return MTP

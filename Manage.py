@@ -2,7 +2,7 @@ from Calculations import *
 from WebDriver import *
 import time
 
-bet = 2
+bet = 4
 
 
 def betlog(bet_list, track, current_race, file_name):
