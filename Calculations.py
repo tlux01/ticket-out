@@ -11,6 +11,9 @@ def comp_evs_show(track, race_num, bet = 0, bet_list = {}):
     :param race_num: race number
     :param bet: default to $0 bet, added as bet can change pool
                 and therefore the expected payout
+    :param bet_list: if horse was bet on we set bet to 0 as we
+                     want to calculate ev with our bet already
+                     in the pool
     :return: none
     """
     win_show_url = get_url(track, race_num)['WPS']
@@ -239,12 +242,15 @@ def dd_implied(double_total, will_pays):
     """
     total = 0
     for horse in will_pays.keys():
-        if will_pays[horse]['Will Pay'] != 'Scratch':
+        if will_pays[horse]['Will Pay'] not in ['Scratch', 'None']:
             will_pays[horse]['Num Tickets'] = double_total / will_pays[horse]['Will Pay']
             total += will_pays[horse]['Num Tickets']
     for horse in will_pays.keys():
         if will_pays[horse]['Will Pay'] != 'Scratch':
-            will_pays[horse]['DD Implied'] = will_pays[horse]['Num Tickets'] / total
+            if will_pays[horse]['Will Pay'] == 'None':
+                will_pays[horse]['DD Implied'] = 0
+            else:
+                will_pays[horse]['DD Implied'] = will_pays[horse]['Num Tickets'] / total
 
     return will_pays
 
@@ -259,7 +265,7 @@ def bet_or_cancel(horse_evs, threshold = 1.1):
     """
     win = horse_evs["Show Win EV"]
     dd = horse_evs["Show DD EV"]
-    print((win + dd) / 2)
+    print((win), (dd))
     if win > 1.1 and dd > 1.1:
         return True
 

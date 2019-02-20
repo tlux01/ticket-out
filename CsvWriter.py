@@ -164,4 +164,75 @@ def write_header(track):
         writer.writerow(header)
 
 
+def create_betlog():
+    """
+    creates today's betlog if it doesnt already exists
+    :return:
+    """
+    today = datetime.now().date()
+    file_name = 'Bets/' + str(today) + '.csv'
+    file_name = os.path.join(os.getcwd(), file_name)
+    # writes new file if file not in our Bets folder
+    print(file_name)
+    if not os.path.isfile(file_name):
+        with open(file_name, 'w', newline='') as f:
+            header = ['Track', 'Race', 'Horse', 'Amount', 'Ticket Number']
+            writer = csv.writer(f)
+            writer.writerow(header)
+    else:
+        print("Betlog already exists")
+
+
+def betlog(bet_list, track, current_race, bet, file_name):
+    if bet_list:
+        with open(file_name, 'a', newline='') as f:
+            writer = csv.writer(f)
+            for horse in bet_list.keys():
+                line = [track, current_race, horse, str(bet), str(bet_list[horse])]
+                writer.writerow(line)
+
+
+def analyze_bets():
+    """
+    retrieves the final evs of each race we bet at the end of the day
+    they must be collected on the day of because the data won't be available
+    the following day
+    :return:
+    """
+    today = datetime.now().date()
+    file_name = 'Bets/' + str(today) + '.csv'
+    file_name = os.path.join(os.getcwd(), file_name)
+    data = []
+    with open(file_name, 'r') as f:
+            reader = csv.reader(f)
+            for index, row in enumerate(reader):
+                print(row)
+                if index > 0:
+                    track = row[0]
+                    print(track)
+                    race = int(row[1])
+                    horse = row[2]
+                    evs = comp_evs_show(track, race)
+                    print(evs[horse])
+                    win_ev = evs[horse]["Show Win EV"]
+                    dd_ev = evs[horse]["Show DD EV"]
+                    if win_ev >= 1.1 and dd_ev >= 1.1:
+                        valid = 1
+                    else:
+                        valid = 0
+                    result = collect_results(track, race)
+                    if horse in result.keys():
+                        payout = int(row[3]) * result[horse]['Show Payout']
+                    else:
+                        payout = 0
+                    new_line = [track, race, horse, row[3], row[4], win_ev, dd_ev, valid, payout]
+                    data.append(new_line)
+                index += 1
+    with open(file_name, 'w', newline='') as w:
+        writer = csv.writer(w)
+        header = ['Track', 'Race', 'Horse', 'Amount', 'Ticket Number', 'Show Win Ev', 'Show DD Ev', 'Valid Bet', 'Payout']
+        writer.writerow(header)
+        for row in data:
+            print(row)
+            writer.writerow(row)
 

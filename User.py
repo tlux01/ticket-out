@@ -8,3 +8,5 @@ if __name__ == '__main__':
             track_data_collector(track)
         except Exception as e:
             print(e)
+    analyze_bets()
+time.sleep(10)

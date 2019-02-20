@@ -2,6 +2,7 @@ import requests
 from datetime import datetime
 from ID import get_url, track_list, tracks_to_bet
 
+# to make clean get requests need this header
 headers = {
      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
 }
@@ -31,8 +32,9 @@ def find_num_races(track):
     schedule_url = get_url(track)['Races']
     schedule = requests.get(schedule_url, headers= headers)
     data = schedule.json()
+    print(data)
     try:
-        num = len(data)
+        num = int(data[-1]['race'])
     except:
         num = 0
     return num
@@ -182,6 +184,8 @@ def collect_will_pays(track, race_num):
                     val = horse['Value']
                     if val == ' SC':
                         will_pays[horse['ProgramNumber']]['Will Pay'] = 'Scratch'
+                    elif val == ' NM':
+                        will_pays[horse['ProgramNumber']]['Will Pay'] = 'None'
                     else:
                         will_pays[horse['ProgramNumber']]['Will Pay'] = float(horse['Value'])
                 else:

@@ -39,7 +39,7 @@ track_list = {
                                  'NYRA': 'Turfway Park'}
              }
 
-tracks_to_bet = ["Parx Racing", "Gulfstream Park", "Laurel Park", "Fair Grounds"]
+tracks_to_bet = ["Gulfstream Park", "Laurel Park", "Fair Grounds", "Santa Anita Park"]
 
 def get_url(track, race_num = '1'):
     urls = {}

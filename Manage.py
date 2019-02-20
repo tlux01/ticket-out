@@ -1,25 +1,16 @@
 from Calculations import *
 from WebDriver import *
+from CsvWriter import *
 import time
+import traceback
 
 bet = 4
 
-
-def betlog(bet_list, track, current_race, file_name):
-    with open(file_name, 'a') as f:
-        date = datetime.now()
-        f.write(str(date) + ' ' + track + ' ' + str(current_race) + '\n')
-        if bet_list:
-            for horse in bet_list.keys():
-                f.write('Horse: ' + horse + ' Amount: ' + str(bet) +
-                        ' Ticket #: ' + str(bet_list[horse]) + '\n')
-        else:
-            f.write("No Bets\n")
-
-
 def monitor_wrapper():
     bet_list = {}
+    create_betlog()
     active_tracks = find_active_tracks()
+    print(active_tracks)
     for track in active_tracks.keys():
         bet_list[track] = {}
         n = find_num_races(track)
@@ -28,13 +19,17 @@ def monitor_wrapper():
     r = True
     while True:
         driver = open_NYRA()
+        driver.implicitly_wait(1)
         NYRA_login(driver, 'login.txt')
+
         try:
             monitor(bet_list, active_tracks, driver)
         except Exception as e:
             print(e)
+            print(type(e).__name__)
             driver.close()
             r = False
+            traceback.print_exc()
         if r:
             break
         else:
@@ -63,6 +58,7 @@ def monitor(bet_list, active_tracks, driver):
                         open_tracks[track] = find_if_track_open(track, info, open_tracks[track]['Error'],
                                                                 open_tracks[track])
                 else:
+                    print(open_tracks)
                     open_tracks[track] = find_if_track_open(track, info)
         open_tracks_keys = list(open_tracks.keys())
         for track in open_tracks_keys:
@@ -73,13 +69,13 @@ def monitor(bet_list, active_tracks, driver):
                 if track in active_queue.keys():
                     current_race = active_queue[track]['Current Race']
                     active_queue.pop(track)
-                    file_name = 'betlog.txt'
+                    today = datetime.now().date()
+                    file_name = 'Bets/' + str(today) + '.csv'
                     file_name = os.path.join(os.getcwd(), file_name)
-                    print(file_name, current_race)
                     betlog(bet_list[track][current_race], track,
-                           current_race, file_name)
+                           current_race, bet, file_name)
             else:
-                if open_tracks[track]['MTP'] < 1 and open_tracks[track]['Current Race'] > 1:
+                if open_tracks[track]['MTP'] < 2 and open_tracks[track]['Current Race'] > 1:
                     active_queue[track] = open_tracks[track]
         active_queue_keys = list(active_queue.keys())
         for track in active_queue_keys:
@@ -126,6 +122,10 @@ def monitor(bet_list, active_tracks, driver):
                             time.sleep(1)
                             track_bet_list = cancel_bet(driver, track_bet_list, horse)
                             bet_list[track][current_race] = track_bet_list
+                if loop_num == 0:
+                    go_to_race(driver, current_race, track_list[track]["NYRA"])
+                    track_bet_list = bet_list[track][current_race]
+                    check_bets(driver, track_bet_list)
         for track in active_queue:
             print(track)
             current_race = active_queue[track]['Current Race']
@@ -143,8 +143,8 @@ def monitor(bet_list, active_tracks, driver):
                     print(min_mtp, "minutes until next bettable race")
                 time.sleep(2)
         else:
-            time.sleep(1)
             print(active_queue)
+
 
 
 
@@ -178,7 +178,9 @@ def min_MTP(open_tracks):
 
 def find_if_track_open(track, info, error = False, previous_open = None):
     open_track = None
+    print(track)
     track_stat = get_track_info(track, info)
+    print(track_stat['Status'])
     if error:
         current_race = int(track_stat["RaceNum"])
         num = find_num_races(track)
